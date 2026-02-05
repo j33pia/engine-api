@@ -14,66 +14,64 @@ import {
   Activity,
   AlertCircle,
   TrendingUp,
-  Users,
 } from "lucide-react";
 
-interface OverviewData {
-  partners: {
+interface DadosResumo {
+  parceiros: {
     total: number;
-    active: number;
-    inactive: number;
+    ativos: number;
+    inativos: number;
   };
-  invoices: {
+  notas: {
     total: number;
-    last30Days: number;
-    byModel: {
+    ultimos30Dias: number;
+    porModelo: {
       "55": number;
       "65": number;
       "58": number;
       nfse: number;
     };
   };
-  audit: {
-    logsLast30Days: number;
-    errorRate24h: number;
+  auditoria: {
+    logsUltimos30Dias: number;
+    taxaErro24h: number;
   };
-  system: {
+  sistema: {
     status: string;
     uptime: number;
     timestamp: string;
   };
 }
 
-export default function AdminOverviewPage() {
-  const [data, setData] = useState<OverviewData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export default function PaginaVisaoGeral() {
+  const [dados, setDados] = useState<DadosResumo | null>(null);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState<string | null>(null);
 
   useEffect(() => {
-    // TODO: Replace with actual API call when auth is ready
-    // For now, using mock data
-    const mockData: OverviewData = {
-      partners: { total: 12, active: 10, inactive: 2 },
-      invoices: {
+    // TODO: Substituir por chamada real à API
+    const dadosMock: DadosResumo = {
+      parceiros: { total: 12, ativos: 10, inativos: 2 },
+      notas: {
         total: 45230,
-        last30Days: 3420,
-        byModel: { "55": 2100, "65": 890, "58": 230, nfse: 200 },
+        ultimos30Dias: 3420,
+        porModelo: { "55": 2100, "65": 890, "58": 230, nfse: 200 },
       },
-      audit: { logsLast30Days: 15420, errorRate24h: 0.5 },
-      system: {
-        status: "healthy",
+      auditoria: { logsUltimos30Dias: 15420, taxaErro24h: 0.5 },
+      sistema: {
+        status: "operacional",
         uptime: 864000,
         timestamp: new Date().toISOString(),
       },
     };
 
     setTimeout(() => {
-      setData(mockData);
-      setLoading(false);
+      setDados(dadosMock);
+      setCarregando(false);
     }, 500);
   }, []);
 
-  if (loading) {
+  if (carregando) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500" />
@@ -81,48 +79,49 @@ export default function AdminOverviewPage() {
     );
   }
 
-  if (error) {
+  if (erro) {
     return (
       <div className="flex items-center justify-center h-64 text-red-500">
-        <AlertCircle className="mr-2" /> {error}
+        <AlertCircle className="mr-2" /> {erro}
       </div>
     );
   }
 
-  const formatUptime = (seconds: number) => {
-    const days = Math.floor(seconds / 86400);
-    const hours = Math.floor((seconds % 86400) / 3600);
-    return `${days}d ${hours}h`;
+  const formatarUptime = (segundos: number) => {
+    const dias = Math.floor(segundos / 86400);
+    const horas = Math.floor((segundos % 86400) / 3600);
+    return `${dias}d ${horas}h`;
   };
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* Cabeçalho */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">SuperAdmin Overview</h1>
+          <h1 className="text-3xl font-bold">Visão Geral</h1>
           <p className="text-muted-foreground">
-            Visão geral da plataforma EngineAPI
+            Painel de operações da plataforma EngineAPI
           </p>
         </div>
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Activity className="h-4 w-4 text-green-500" />
-          Sistema: {data?.system.status}
+          Sistema: {dados?.sistema.status}
         </div>
       </div>
 
-      {/* KPI Cards */}
+      {/* Cards de KPIs */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {/* Partners */}
+        {/* Parceiros */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Partners</CardTitle>
+            <CardTitle className="text-sm font-medium">Parceiros</CardTitle>
             <Building2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{data?.partners.total}</div>
+            <div className="text-2xl font-bold">{dados?.parceiros.total}</div>
             <p className="text-xs text-muted-foreground">
-              {data?.partners.active} ativos, {data?.partners.inactive} inativos
+              {dados?.parceiros.ativos} ativos, {dados?.parceiros.inativos}{" "}
+              inativos
             </p>
           </CardContent>
         </Card>
@@ -135,46 +134,50 @@ export default function AdminOverviewPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {data?.invoices.last30Days.toLocaleString()}
+              {dados?.notas.ultimos30Dias.toLocaleString("pt-BR")}
             </div>
             <p className="text-xs text-muted-foreground">
-              Total: {data?.invoices.total.toLocaleString()}
+              Total: {dados?.notas.total.toLocaleString("pt-BR")}
             </p>
           </CardContent>
         </Card>
 
-        {/* Audit Logs */}
+        {/* Logs de Auditoria */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Audit Logs</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Logs de Auditoria
+            </CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {data?.audit.logsLast30Days.toLocaleString()}
+              {dados?.auditoria.logsUltimos30Dias.toLocaleString("pt-BR")}
             </div>
             <p className="text-xs text-muted-foreground">
-              Error rate: {data?.audit.errorRate24h}%
+              Taxa de erro: {dados?.auditoria.taxaErro24h}%
             </p>
           </CardContent>
         </Card>
 
-        {/* System */}
+        {/* Sistema */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Uptime</CardTitle>
+            <CardTitle className="text-sm font-medium">Tempo Ativo</CardTitle>
             <Activity className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {data?.system.uptime ? formatUptime(data.system.uptime) : "-"}
+              {dados?.sistema.uptime
+                ? formatarUptime(dados.sistema.uptime)
+                : "-"}
             </div>
             <p className="text-xs text-muted-foreground">Sistema operacional</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Invoices by Model */}
+      {/* Notas por Modelo */}
       <Card>
         <CardHeader>
           <CardTitle>Notas por Modelo (últimos 30 dias)</CardTitle>
@@ -191,7 +194,7 @@ export default function AdminOverviewPage() {
               <div>
                 <p className="text-sm text-muted-foreground">NFe (55)</p>
                 <p className="text-xl font-bold">
-                  {data?.invoices.byModel["55"].toLocaleString()}
+                  {dados?.notas.porModelo["55"].toLocaleString("pt-BR")}
                 </p>
               </div>
             </div>
@@ -203,7 +206,7 @@ export default function AdminOverviewPage() {
               <div>
                 <p className="text-sm text-muted-foreground">NFCe (65)</p>
                 <p className="text-xl font-bold">
-                  {data?.invoices.byModel["65"].toLocaleString()}
+                  {dados?.notas.porModelo["65"].toLocaleString("pt-BR")}
                 </p>
               </div>
             </div>
@@ -215,7 +218,7 @@ export default function AdminOverviewPage() {
               <div>
                 <p className="text-sm text-muted-foreground">MDFe (58)</p>
                 <p className="text-xl font-bold">
-                  {data?.invoices.byModel["58"].toLocaleString()}
+                  {dados?.notas.porModelo["58"].toLocaleString("pt-BR")}
                 </p>
               </div>
             </div>
@@ -227,7 +230,7 @@ export default function AdminOverviewPage() {
               <div>
                 <p className="text-sm text-muted-foreground">NFSe</p>
                 <p className="text-xl font-bold">
-                  {data?.invoices.byModel.nfse.toLocaleString()}
+                  {dados?.notas.porModelo.nfse.toLocaleString("pt-BR")}
                 </p>
               </div>
             </div>

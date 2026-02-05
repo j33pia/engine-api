@@ -15,10 +15,10 @@ import {
 import { cn } from "@/lib/utils";
 
 const adminNavItems = [
-  { href: "/admin", icon: LayoutDashboard, label: "Overview" },
-  { href: "/admin/partners", icon: Building2, label: "Partners" },
-  { href: "/admin/audit", icon: ScrollText, label: "Audit Logs" },
-  { href: "/admin/billing", icon: DollarSign, label: "Billing" },
+  { href: "/admin", icon: LayoutDashboard, label: "Visão Geral" },
+  { href: "/admin/partners", icon: Building2, label: "Parceiros" },
+  { href: "/admin/audit", icon: ScrollText, label: "Logs de Auditoria" },
+  { href: "/admin/billing", icon: DollarSign, label: "Faturamento" },
   { href: "/admin/system", icon: Activity, label: "Sistema" },
 ];
 
@@ -60,13 +60,12 @@ export function AdminNav() {
           })}
         </nav>
 
-        {/* Footer */}
         <div className="border-t p-4">
           <Link
             href="/dashboard"
             className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
           >
-            ← Voltar ao Dashboard Partner
+            ← Voltar ao Dashboard
           </Link>
         </div>
       </div>

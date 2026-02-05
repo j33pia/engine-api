@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -19,89 +18,89 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Search, Building2, MoreHorizontal, Eye } from "lucide-react";
+import { Plus, Search, Building2, Eye } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
-interface Partner {
+interface Parceiro {
   id: string;
-  name: string;
+  nome: string;
   cnpj: string | null;
   email: string | null;
-  createdAt: string;
-  subscription: {
+  criadoEm: string;
+  assinatura: {
     status: string;
-    plan: string;
+    plano: string;
   } | null;
-  issuersCount: number;
+  qtdEmissores: number;
 }
 
-export default function AdminPartnersPage() {
-  const [partners, setPartners] = useState<Partner[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
+export default function PaginaParceiros() {
+  const [parceiros, setParceiros] = useState<Parceiro[]>([]);
+  const [carregando, setCarregando] = useState(true);
+  const [termoBusca, setTermoBusca] = useState("");
 
   useEffect(() => {
-    // Mock data - replace with API call
-    const mockPartners: Partner[] = [
+    // Dados mock - substituir por chamada API
+    const parceirosMock: Parceiro[] = [
       {
         id: "1",
-        name: "TechSoft Sistemas",
+        nome: "TechSoft Sistemas",
         cnpj: "12.345.678/0001-99",
         email: "contato@techsoft.com",
-        createdAt: "2024-01-15T10:00:00Z",
-        subscription: { status: "ACTIVE", plan: "Pro" },
-        issuersCount: 45,
+        criadoEm: "2024-01-15T10:00:00Z",
+        assinatura: { status: "ATIVO", plano: "Pro" },
+        qtdEmissores: 45,
       },
       {
         id: "2",
-        name: "ERP Solutions",
+        nome: "ERP Solutions",
         cnpj: "98.765.432/0001-11",
         email: "suporte@erpsolutions.com",
-        createdAt: "2024-02-20T14:30:00Z",
-        subscription: { status: "ACTIVE", plan: "Enterprise" },
-        issuersCount: 120,
+        criadoEm: "2024-02-20T14:30:00Z",
+        assinatura: { status: "ATIVO", plano: "Enterprise" },
+        qtdEmissores: 120,
       },
       {
         id: "3",
-        name: "Contábil Express",
+        nome: "Contábil Express",
         cnpj: "11.222.333/0001-44",
         email: "admin@contabilexpress.com",
-        createdAt: "2024-03-10T09:15:00Z",
-        subscription: { status: "SUSPENDED", plan: "Basic" },
-        issuersCount: 8,
+        criadoEm: "2024-03-10T09:15:00Z",
+        assinatura: { status: "SUSPENSO", plano: "Básico" },
+        qtdEmissores: 8,
       },
     ];
 
     setTimeout(() => {
-      setPartners(mockPartners);
-      setLoading(false);
+      setParceiros(parceirosMock);
+      setCarregando(false);
     }, 500);
   }, []);
 
-  const filteredPartners = partners.filter(
+  const parceirosFiltrados = parceiros.filter(
     (p) =>
-      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.cnpj?.includes(searchTerm) ||
-      p.email?.toLowerCase().includes(searchTerm.toLowerCase()),
+      p.nome.toLowerCase().includes(termoBusca.toLowerCase()) ||
+      p.cnpj?.includes(termoBusca) ||
+      p.email?.toLowerCase().includes(termoBusca.toLowerCase()),
   );
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* Cabeçalho */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Partners</h1>
+          <h1 className="text-3xl font-bold">Parceiros</h1>
           <p className="text-muted-foreground">
             Gerenciamento de software houses parceiras
           </p>
         </div>
         <Button className="bg-red-500 hover:bg-red-600">
           <Plus className="mr-2 h-4 w-4" />
-          Novo Partner
+          Novo Parceiro
         </Button>
       </div>
 
-      {/* Search */}
+      {/* Busca */}
       <Card>
         <CardContent className="pt-6">
           <div className="relative">
@@ -109,23 +108,23 @@ export default function AdminPartnersPage() {
             <Input
               placeholder="Buscar por nome, CNPJ ou email..."
               className="pl-10"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              value={termoBusca}
+              onChange={(e) => setTermoBusca(e.target.value)}
             />
           </div>
         </CardContent>
       </Card>
 
-      {/* Partners Table */}
+      {/* Tabela de Parceiros */}
       <Card>
         <CardHeader>
-          <CardTitle>Lista de Partners</CardTitle>
+          <CardTitle>Lista de Parceiros</CardTitle>
           <CardDescription>
-            {filteredPartners.length} partners encontrados
+            {parceirosFiltrados.length} parceiros encontrados
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {loading ? (
+          {carregando ? (
             <div className="flex justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500" />
             </div>
@@ -133,7 +132,7 @@ export default function AdminPartnersPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Partner</TableHead>
+                  <TableHead>Parceiro</TableHead>
                   <TableHead>CNPJ</TableHead>
                   <TableHead>Plano</TableHead>
                   <TableHead>Status</TableHead>
@@ -143,48 +142,48 @@ export default function AdminPartnersPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredPartners.map((partner) => (
-                  <TableRow key={partner.id}>
+                {parceirosFiltrados.map((parceiro) => (
+                  <TableRow key={parceiro.id}>
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <div className="rounded-full bg-red-100 p-2 dark:bg-red-900">
                           <Building2 className="h-4 w-4 text-red-600" />
                         </div>
                         <div>
-                          <p className="font-medium">{partner.name}</p>
+                          <p className="font-medium">{parceiro.nome}</p>
                           <p className="text-sm text-muted-foreground">
-                            {partner.email}
+                            {parceiro.email}
                           </p>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell className="font-mono text-sm">
-                      {partner.cnpj || "-"}
+                      {parceiro.cnpj || "-"}
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline">
-                        {partner.subscription?.plan || "Sem plano"}
+                        {parceiro.assinatura?.plano || "Sem plano"}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       <Badge
                         variant={
-                          partner.subscription?.status === "ACTIVE"
+                          parceiro.assinatura?.status === "ATIVO"
                             ? "default"
                             : "destructive"
                         }
                         className={
-                          partner.subscription?.status === "ACTIVE"
+                          parceiro.assinatura?.status === "ATIVO"
                             ? "bg-green-500"
                             : ""
                         }
                       >
-                        {partner.subscription?.status || "N/A"}
+                        {parceiro.assinatura?.status || "N/A"}
                       </Badge>
                     </TableCell>
-                    <TableCell>{partner.issuersCount}</TableCell>
+                    <TableCell>{parceiro.qtdEmissores}</TableCell>
                     <TableCell>
-                      {new Date(partner.createdAt).toLocaleDateString("pt-BR")}
+                      {new Date(parceiro.criadoEm).toLocaleDateString("pt-BR")}
                     </TableCell>
                     <TableCell className="text-right">
                       <Button variant="ghost" size="sm">
