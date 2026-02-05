@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  engine-api:
+    container_name: engine-api-compiled
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.builder
+    ports:
+      - "3001:3001"
+    environment:
+      - DATABASE_URL=postgresql://engine_user:engine_password@db:5432/engine_api_db
+      - NODE_ENV=production
+      - ENCRYPTION_KEY=your-32-char-encryption-key-here-change-this
+    depends_on:
+      - db
+    volumes:
+      - ./uploads:/app/uploads
+      - ./xml:/app/xml
+    platform: linux/amd64
+    networks:
+      - engine-network
+
+  db:
+    image: postgres:16
+    container_name: engine-api-db
+    environment:
+      - POSTGRES_USER=engine_user
+      - POSTGRES_PASSWORD=engine_password
+      - POSTGRES_DB=engine_api_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - engine-network
+
+volumes:
+  postgres_data:
+
+networks:
+  engine-network:
+    driver: bridge

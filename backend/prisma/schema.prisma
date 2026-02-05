@@ -1,0 +1,354 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --------------------------------------
+// SaaS Core (Software House Management)
+// --------------------------------------
+
+model Partner {
+  id           String   @id @default(uuid())
+  name         String
+  cnpj         String?  @unique
+  email        String?
+  phone        String?
+  webhookUrl   String?  // URL para receber notificações de NFe
+  apiKey       String   @unique @default(uuid()) // Chave Mestra da Software House
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  users        User[]
+  issuers      Issuer[]
+  subscription Subscription?
+  metrics      UsageMetric[]
+
+  @@map("partners")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String   // Hashed
+  role      String   @default("ADMIN") // ADMIN, DEVELOPER, FINANCE
+  
+  partnerId String?
+  partner   Partner? @relation(fields: [partnerId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+// --------------------------------------
+// Billing & Plans (Future Proofing)
+// --------------------------------------
+
+model Plan {
+  id               String   @id @default(uuid())
+  name             String   // e.g. "Basic", "Pro", "Enterprise"
+  price            Decimal  @default(0)
+  includedInvoices Int      @default(0)
+  pricePerExtra    Decimal  @default(0)
+  
+  createdAt        DateTime @default(now())
+  
+  subscriptions    Subscription[]
+
+  @@map("plans")
+}
+
+model Subscription {
+  id        String   @id @default(uuid())
+  status    String   @default("ACTIVE") // ACTIVE, CANCELED, PAST_DUE
+  
+  partnerId String   @unique
+  partner   Partner  @relation(fields: [partnerId], references: [id])
+  
+  planId    String
+  plan      Plan     @relation(fields: [planId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("subscriptions")
+}
+
+model UsageMetric {
+  id        String   @id @default(uuid())
+  period    String   // Format: "YYYY-MM"
+  count     Int      @default(0)
+  
+  partnerId String
+  partner   Partner  @relation(fields: [partnerId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([partnerId, period])
+  @@map("usage_metrics")
+}
+
+// Eventos Fiscais (CC-e, Cancelamento, etc)
+model FiscalEvent {
+  id               String   @id @default(uuid())
+  
+  invoiceId        String
+  invoice          Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  
+  eventType        String   // CCE, CANCELAMENTO, MANIFESTACAO
+  sequence         Int      // Sequência do evento (para CC-e)
+  description      String   @db.Text // Correção ou justificativa
+  protocol         String?  // Protocolo SEFAZ
+  xml              String?  @db.Text // XML do evento
+  
+  createdAt        DateTime @default(now())
+  
+  @@index([invoiceId])
+  @@map("fiscal_events")
+}
+
+// --------------------------------------
+// Fiscal Core (The Invoice Emitters)
+// --------------------------------------
+
+model Issuer {
+  id           String    @id @default(uuid())
+  cnpj         String    @unique
+  name         String
+  tradeName    String?   // Nome Fantasia
+  ie           String?   // Inscrição Estadual
+  im           String?   // Inscrição Municipal
+  crt          Int       @default(1) // 1=Simples Nacional, 3=Regime Normal
+  email        String?
+  phone        String?
+
+  // Address
+  cep          String?
+  address      String?
+  number       String?
+  complement   String?
+  neighborhood String?
+  city         String?
+  state        String?
+  ibgeCode     String?   // Código IBGE da Cidade
+
+  // Certificate Info
+  certFilename String?
+  certPassword String?
+  certExpiry   DateTime?
+  
+  // NFCe - CSC (Código de Segurança do Contribuinte)
+  csc          String?   // Token CSC para NFCe
+  cscId        String?   // ID do Token CSC
+  
+  // Relations
+  partnerId    String?   
+  partner      Partner?  @relation(fields: [partnerId], references: [id])
+  
+  invoices     Invoice[]
+  products     Product[]
+  customers    Customer[]
+  mdfes        Mdfe[]
+  
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("issuers")
+}
+
+enum InvoiceStatus {
+  CREATED
+  SIGNED
+  TRANSMITTING
+  AUTHORIZED
+  REJECTED
+  CANCELED
+  ERROR
+}
+
+model Invoice {
+  id          String        @id @default(uuid())
+  
+  // Fiscal Data
+  accessKey   String?       @unique // Chave de Acesso (só existe após gerar XML)
+  number      Int
+  series      Int
+  model       String        @default("55") // 55 (NFe) or 65 (NFCe)
+  
+  // Values
+  amount      Decimal
+  
+  // Destination
+  destCNPJ    String?
+  destName    String?
+  
+  // Storage Paths
+  xmlPath     String?
+  pdfPath     String?
+  
+  // Flow Control
+  status      InvoiceStatus @default(CREATED)
+  sefaMult    String?       // Mensagem de retorno da SEFAZ
+  
+  // Relations
+  issuerId    String
+  issuer      Issuer        @relation(fields: [issuerId], references: [id])
+  
+  customerId  String?
+  customer    Customer?     @relation(fields: [customerId], references: [id])
+  
+  items       InvoiceItem[]
+  fiscalEvents FiscalEvent[]
+  
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("invoices")
+  @@index([issuerId])
+  @@index([accessKey])
+  @@index([createdAt])
+}
+
+model Customer {
+  id           String   @id @default(uuid())
+  issuerId     String
+  issuer       Issuer   @relation(fields: [issuerId], references: [id])
+
+  document     String   // CPF ou CNPJ
+  name         String
+  email        String?
+  phone        String?
+  
+  // Address
+  cep          String?
+  address      String?
+  number       String?
+  complement   String?
+  neighborhood String?
+  city         String?
+  state        String?
+
+  invoices     Invoice[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([issuerId, document])
+  @@map("customers")
+}
+
+model Product {
+  id           String   @id @default(uuid())
+  issuerId     String
+  issuer       Issuer   @relation(fields: [issuerId], references: [id])
+
+  code         String   // Código interno do produto
+  ean          String?  // Código de Barras (GTIN)
+  description  String
+  ncm          String?
+  cest         String?
+  cfop         String?
+  unit         String?  // UN
+  
+  price        Decimal  // Preço atual
+  
+  items        InvoiceItem[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([issuerId, code])
+  @@index([ean])
+  @@map("products")
+}
+
+model InvoiceItem {
+  id           String   @id @default(uuid())
+  invoiceId    String
+  invoice      Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  
+  productId    String?
+  product      Product? @relation(fields: [productId], references: [id])
+
+  itemCode     String
+  description  String
+  ean          String?
+  ncm          String?
+  quantity     Decimal
+  unitPrice    Decimal
+  totalPrice   Decimal
+
+  createdAt    DateTime @default(now())
+
+  @@map("invoice_items")
+}
+
+// ======================
+// MDFe (Modelo 58)
+// ======================
+
+enum MdfeStatus {
+  CREATED
+  AUTHORIZED
+  REJECTED
+  CANCELED
+  CLOSED       // Encerrado
+}
+
+model Mdfe {
+  id            String      @id @default(uuid())
+  
+  accessKey     String?     @unique
+  number        Int
+  series        Int         @default(1)
+  
+  // Dados da viagem
+  ufStart       String      // UF de início (SP, MG, etc)
+  ufEnd         String      // UF de destino
+  dtViagem      DateTime    // Data/hora início viagem
+  
+  // Veículo
+  placaVeiculo  String
+  renavam       String?
+  tara          Int?        // Peso do veículo vazio (kg)
+  capKg         Int?        // Capacidade em KG
+  capM3         Int?        // Capacidade em M3
+  
+  // Motorista
+  cpfMotorista  String
+  nomeMotorista String
+  
+  // Documentos vinculados (JSON array)
+  // [{chNFe: "35...", tpDoc: "1"}] 1=NFe, 2=CTe
+  documentos    Json
+  
+  // Totais
+  qNFe          Int         @default(0)  // Qtd NFe vinculadas
+  qCTe          Int         @default(0)  // Qtd CTe vinculadas
+  vCarga        Decimal     @default(0)  // Valor total carga
+  
+  status        MdfeStatus  @default(CREATED)
+  protocol      String?
+  xmlPath       String?
+  pdfPath       String?
+  
+  // Encerramento
+  dtEncerramento DateTime?
+  ufEncerramento String?
+  
+  issuerId      String
+  issuer        Issuer      @relation(fields: [issuerId], references: [id])
+  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  
+  @@map("mdfes")
+}

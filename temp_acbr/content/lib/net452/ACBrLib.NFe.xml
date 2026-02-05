@@ -1,0 +1,1679 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ACBrLib.NFe</name>
+    </assembly>
+    <members>
+        <member name="M:ACBrLib.NFe.ACBrNFe.CarregarNFe(ACBrLib.NFe.NotaFiscal)">
+            <summary>
+            Adiciona uma nota fiscal na lista.
+            </summary>
+            <param name="nfe"></param>
+        </member>
+        <member name="M:ACBrLib.NFe.ACBrNFe.ObterNFe(System.Int32)">
+            <summary>
+            Retornar os dados da NFe no index informado.
+            </summary>
+            <param name="aIndex"></param>
+            <returns></returns>
+        </member>
+        <member name="P:ACBrLib.NFe.ACBrNFeConfig.DANFe">
+            <summary>
+            Retorna configurações da DANFe.
+            </summary>
+        </member>
+        <member name="T:ACBrLib.NFe.COFINSProdutoNFe">
+            <summary>
+            COFINS
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.COFINSProdutoNFe.CST">
+            <summary>
+            Código de Situação Tributária da COFINS
+            <para>01=Operação Tributável (base de cálculo = valor da operação alíquota normal(cumulativo/não cumulativo));</para>
+            <para>02=Operação Tributável(base de cálculo = valor da operação (alíquota diferenciada));</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.COFINSProdutoNFe.vBC">
+            <summary>
+            Valor da Base de Cálculo da COFINS
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.COFINSProdutoNFe.pCOFINS">
+            <summary>
+            Alíquota da COFINS (em percentual)
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.COFINSProdutoNFe.qBCProd">
+            <summary>
+            Quantidade Vendida
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.COFINSProdutoNFe.vAliqProd">
+            <summary>
+            Alíquota da COFINS (em reais)
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.COFINSProdutoNFe.vCOFINS">
+            <summary>
+            Valor da COFINS
+            </summary>
+        </member>
+        <member name="T:ACBrLib.NFe.COFINSSTProdutoNFe">
+            <summary>
+            COFINS ST
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.COFINSSTProdutoNFe.vBC">
+            <summary>
+            Valor da Base de Cálculo da COFINS
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.COFINSSTProdutoNFe.pCOFINS">
+            <summary>
+            Alíquota da COFINS (em percentual)
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.COFINSSTProdutoNFe.qBCProd">
+            <summary>
+            Quantidade Vendida
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.COFINSSTProdutoNFe.vAliqProd">
+            <summary>
+            Alíquota da COFINS (em reais)
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.COFINSSTProdutoNFe.vCOFINS">
+            <summary>
+            Valor da COFINS
+            </summary>
+        </member>
+        <member name="T:ACBrLib.NFe.DadosAdicionaisNFe">
+            <summary>
+            Informações Adicionais da NF-e
+            </summary>
+        </member>
+        <member name="T:ACBrLib.NFe.DestinatarioNFe">
+            <summary>
+            Identificação do Destinatário da Nota Fiscal eletrônica
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.DestinatarioNFe.idEstrangeiro">
+            <summary>
+            Identificação do destinatário no caso de comprador estrangeiro
+            <para>No caso de operação com o
+            exterior, ou para comprador estrangeiro informar a tag
+            "idEstrangeiro", com o número do passaporte ou outro
+            documento legal para identificar pessoa estrangeira
+            (campo aceita valor nulo).</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.DestinatarioNFe.CNPJCPF">
+            <summary>
+            CNPJ ou CPF do destinatário
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.DestinatarioNFe.xNome">
+            <summary>
+            Razão Social ou Nome do destinatário
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.DestinatarioNFe.indIEDest">
+            <summary>
+            Indicador da IE do Destinatário
+            <para>1=Contribuinte ICMS (informar a IE do destinatário);</para>
+            <para>2=Contribuinte isento de Inscrição no cadastro de Contribuintes do ICMS;</para>
+            <para>9=Não Contribuinte, que pode ou não possuir Inscrição Estadual no Cadastro de Contribuintes do ICMS.</para>
+            <para>Nota 1: No caso de NFC-e informar indIEDest=9 e não informar a tag IE do destinatário;</para>
+            <para>Nota 2: No caso de operação com o Exterior informar indIEDest=9 e não informar a tag IE do destinatário;</para>
+            <para>Nota 3: No caso de Contribuinte Isento de Inscrição (indIEDest= 2), não informar a tag IE do destinatário.</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.DestinatarioNFe.IE">
+            <summary>
+            Inscrição Estadual do destinatário
+            <para>Campo opcional. Informar somente os algarismos, sem os
+            caracteres de formatação(ponto, barra, hífen, etc.).</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.DestinatarioNFe.IM">
+            <summary>
+            Inscrição na SUFRAMA
+            <para>Obrigatório, nas operações que se beneficiam de
+            incentivos fiscais existentes nas áreas sob controle da
+            SUFRAMA.</para>
+            <para>A omissão desta informação impede o
+            processamento da operação pelo Sistema de Mercadoria
+            Nacional da SUFRAMA e a liberação da Declaração de
+            Ingresso, prejudicando a comprovação do ingresso /
+            internamento da mercadoria nestas áreas. (v2.0)</para>
+            </summary>
+            
+        </member>
+        <member name="P:ACBrLib.NFe.DestinatarioNFe.ISUF">
+            <summary>
+            Inscrição Municipal do Prestador de Serviço
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.DestinatarioNFe.Email">
+            <summary>
+            Email
+            <para>Campo pode ser utilizado para informar o e-mail de
+            recepção da NF-e indicada pelo destinatário(v2.0)</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.DestinatarioNFe.xLgr">
+            <summary>
+            Logradouro
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.DestinatarioNFe.nro">
+            <summary>
+            Número
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.DestinatarioNFe.xCpl">
+            <summary>
+            Complemento
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.DestinatarioNFe.xBairro">
+            <summary>
+            Bairro
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.DestinatarioNFe.cMun">
+            <summary>
+            Código do município
+            <para>Utilizar a Tabela do IBGE</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.DestinatarioNFe.xMun">
+            <summary>
+            Nome do município
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.DestinatarioNFe.UF">
+            <summary>
+            Sigla da UF
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.DestinatarioNFe.CEP">
+            <summary>
+            Código do CEP
+            <para>Informar os zeros não significativos. (NT 2011/004)</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.DestinatarioNFe.cPais">
+            <summary>
+            Código do País
+            <para>1058=Brasil</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.DestinatarioNFe.xPais">
+            <summary>
+            Nome do País
+            <para>Brasil ou BRASIL</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.DestinatarioNFe.Fone">
+            <summary>
+            Telefone
+            <para>Preencher com o Código DDD + número do telefone. Nas
+            operações com exterior é permitido informar o código do
+            país + código da localidade + número do telefone(v2.0)</para>
+            </summary>
+        </member>
+        <member name="T:ACBrLib.NFe.DuplicataNFe">
+            <summary>
+            Dados da Cobrança - Duplicata
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.DuplicataNFe.nDup">
+            <summary>
+            Número da Duplicata
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.DuplicataNFe.dVenc">
+            <summary>
+            Data de vencimento
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.DuplicataNFe.vDup">
+            <summary>
+            Valor da duplicata
+            </summary>
+        </member>
+        <member name="T:ACBrLib.NFe.EmitenteNFe">
+            <summary>
+            Identificação do Emitente da Nota Fiscal eletrônica
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.EmitenteNFe.CRT">
+            <summary>
+            Código de Regime Tributário
+            <para>1=Simples Nacional;</para>
+            <para>2=Simples Nacional, excesso sublimite de receita bruta;</para>
+            <para>3=Regime Normal. (v2.0).</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.EmitenteNFe.CNPJCPF">
+            <summary>
+            CNPJ ou CPF do destinatário
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.EmitenteNFe.xNome">
+            <summary>
+            Razão Social ou Nome do emitente
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.EmitenteNFe.xFant">
+            <summary>
+            Nome fantasia
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.EmitenteNFe.IE">
+            <summary>
+            Inscrição Estadual do Emitente
+            <para>Informar somente os algarismos, sem os caracteres de
+            formatação(ponto, barra, hífen, etc.).</para>
+            <para>Observação: Na emissão de NF-e Avulsa pode ser
+            o literal "ISENTO" para os contribuintes do
+            ICMS isentos de inscrição no Cadastro de
+            Contribuintes de ICMS.</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.EmitenteNFe.IEST">
+            <summary>
+            IE do Substituto Tributário
+            <para>IE do Substituto Tributário da UF de destino da
+            mercadoria, quando houver a retenção do ICMS ST para
+            a UF de destino.</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.EmitenteNFe.IM">
+            <summary>
+            Inscrição Municipal do Prestador de	Serviço
+            <para>Informado na emissão de NF-e conjugada, com itens de
+            produtos sujeitos ao ICMS e itens de serviços sujeitos ao ISSQN.</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.EmitenteNFe.CNAE">
+            <summary>
+            CNAE fiscal
+            <para>Campo Opcional. Pode ser informado quando a Inscrição
+            Municipal(id:C19) for informada.</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.EmitenteNFe.xLgr">
+            <summary>
+            Logradouro
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.EmitenteNFe.nro">
+            <summary>
+            Número
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.EmitenteNFe.xCpl">
+            <summary>
+            Complemento
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.EmitenteNFe.xBairro">
+            <summary>
+            Bairro
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.EmitenteNFe.cMun">
+            <summary>
+            Código do município
+            <para>Utilizar a Tabela do IBGE</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.EmitenteNFe.xMun">
+            <summary>
+            Nome do município
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.EmitenteNFe.cUF">
+            <summary>
+            Código da UF do emitente do Documento Fiscal
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.EmitenteNFe.UF">
+            <summary>
+            Sigla da UF
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.EmitenteNFe.CEP">
+            <summary>
+            Código do CEP
+            <para>Informar os zeros não significativos. (NT 2011/004)</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.EmitenteNFe.cPais">
+            <summary>
+            Código do País
+            <para>1058=Brasil</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.EmitenteNFe.xPais">
+            <summary>
+            Nome do País
+            <para>Brasil ou BRASIL</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.EmitenteNFe.Fone">
+            <summary>
+            Telefone
+            <para>Preencher com o Código DDD + número do telefone. Nas
+            operações com exterior é permitido informar o código do
+            país + código da localidade + número do telefone(v2.0)</para>
+            </summary>
+        </member>
+        <member name="T:ACBrLib.NFe.FaturaNFe">
+            <summary>
+            Dados da Cobrança - Fatura
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.FaturaNFe.nFat">
+            <summary>
+            Número da Fatura
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.FaturaNFe.vOrig">
+            <summary>
+            Valor Original da Fatura
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.FaturaNFe.vDesc">
+            <summary>
+            Valor do desconto
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.FaturaNFe.vLiq">
+            <summary>
+            Valor Líquido da Fatura
+            </summary>
+        </member>
+        <member name="T:ACBrLib.NFe.ICMSProdutoNFe">
+            <summary>
+            ICMS Normal e ST
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.orig">
+            <summary>
+            Origem da mercadoria
+            <para>0 - Nacional, exceto as indicadas nos códigos 3, 4, 5 e 8;</para>
+            <para>1 - Estrangeira - Importação direta, exceto a indicada no código 6;</para>
+            <para>2 - Estrangeira - Adquirida no mercado interno, exceto a indicada no código 7;</para>
+            <para>3 - Nacional, mercadoria ou bem com Conteúdo de Importação superior a 40% e inferior ou igual a 70%;</para>
+            <para>4 - Nacional, cuja produção tenha sido feita em conformidade com os processos produtivos básicos de que tratam as legislações citadas nos Ajustes;</para>
+            <para>5 - Nacional, mercadoria ou bem com Conteúdo de Importação inferior ou igual a 40%;</para>
+            <para>6 - Estrangeira - Importação direta, sem similar nacional, constante em lista da CAMEX e gás natural;</para>
+            <para>7 - Estrangeira - Adquirida no mercado interno, sem similar nacional, constante lista CAMEX e gás natural.</para>
+            <para>8 - Nacional, mercadoria ou bem com Conteúdo de Importação superior a 70%;</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.CST">
+            <summary>
+            Tributação do ICMS = X
+            <para>X = Com redução de base de cálculo</para>
+            <para>00=Tributada integralmente (requerido modBC, vBC, pICMS, vICMS)</para>
+            <para>10=Tributada e com cobrança do ICMS por substituição tributária (requerido modBC, vBC, pICMS, vICMS, modBCST, vBCST, pICMSST, vICMSST)</para>
+            <para>20=Com redução de base de cálculo (requerido modBC, vBC, pICMS, vICMS, pRedBC)</para>
+            <para>30=Isenta ou não tributada e com cobrança do ICMS por substituição tributária (requerido modBCST, vBCST, pICMSST, vICMSST)</para>
+            <para>40=Isenta; 41=Não tributada; 50=Suspensão. (requerido vICMSDeson, motDesICMS)</para>
+            <para>51=Diferimento</para>
+            <para>60=ICMS cobrado anteriormente por substituição tributária (requerido vBCSTRet, vICMSSTRet)</para>
+            <para>70=Com redução de base de cálculo e cobrança do ICMS por substituição tributária (requerido modBC, pRedBC, vBC, pICMS, vICMS, modBCST, vBCST, pICMSST, vICMSST, vICMSDeson, motDesICMS)</para>
+            <para>90=Outros (requerido modBC, vBC, pICMS, vICMS, modBCST, vBCST, pICMSST, vICMSST)</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.modBC">
+            <summary>
+            Modalidade de determinação da BC do ICMS
+            <para>0=Margem Valor Agregado (%);</para>
+            <para>1=Pauta(Valor);</para>
+            <para>2=Preço Tabelado Máx. (valor);</para>
+            <para>3=Valor da operação.</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.pRedBC">
+            <summary>
+            Percentual da Redução de BC
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.vBC">
+            <summary>
+            Valor da BC do ICMS
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.pICMS">
+            <summary>
+            Alíquota do imposto
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.vICMS">
+            <summary>
+            Valor do ICMS
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.modBCST">
+            <summary>
+            Modalidade de determinação da BC do ICMS ST
+            <para>0=Preço tabelado ou máximo sugerido;</para>
+            <para>1=Lista Negativa(valor);</para>
+            <para>2=Lista Positiva(valor);</para>
+            <para>3=Lista Neutra(valor);</para>
+            <para>4=Margem Valor Agregado(%);</para>
+            <para>5=Pauta(valor);</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.pMVAST">
+            <summary>
+            Percentual da margem de valor Adicionado do ICMS ST
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.pRedBCST">
+            <summary>
+            Percentual da Redução de BC do ICMS ST
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.vBCST">
+            <summary>
+            Valor da BC do ICMS ST
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.pICMSST">
+            <summary>
+            Alíquota do imposto do ICMS ST
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.vICMSST">
+            <summary>
+            Valor do ICMS ST retido
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.UFST">
+            <summary>
+            Sigla da UF para qual é devido o ICMS ST da operação. Informar "EX" para Exterior. (v2.0)
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.pBCOp">
+            <summary>
+            Percentual para determinação do valor da Base de Cálculo da operação própria.
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.vBCSTRet">
+            <summary>
+            Valor da BC do ICMS ST retido
+            <para>Valor da BC do ICMS ST cobrado anteriormente por ST (v2.0).</para>
+            <para>O valor pode ser omitido quando a legislação não exigir a sua informação. (NT 2011/004)</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.vICMSSTRet">
+            <summary>
+            Valor do ICMS ST retido
+            <para>Valor do ICMS ST cobrado anteriormente por ST (v2.0).</para>
+            <para>O valor pode ser omitido quando a legislação não exigir a sua informação. (NT 2011/004)</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.motDesICMS">
+            <summary>
+            Motivo da desoneração do ICMS
+            <para>Campo será preenchido quando o campo anterior estiver preenchido.Informar o motivo da desoneração:</para>
+            <para>1=Táxi;</para>
+            <para>3=Produtor Agropecuário;</para>
+            <para>4=Frotista/Locadora;</para>
+            <para>5=Diplomático/Consular;</para>
+            <para>6=Utilitários e Motocicletas da Amazônia Ocidental e Áreas de Livre Comércio(Resolução 714/88 e 790/94 – CONTRAN e suas alterações);</para>
+            <para>7=SUFRAMA;</para>
+            <para>8=Venda a Órgão Público;</para>
+            <para>9=Outros. (NT 2011/004);</para>
+            <para>10=Deficiente Condutor(Convênio ICMS 38/12);</para>
+            <para>11=Deficiente Não Condutor(Convênio ICMS 38/12).</para>
+            <para>12=Órgão de fomento e desenvolvimento agropecuário.</para>
+            <para>Observação: Revogada a partir da versão 3.01 a possibilidade de usar o motivo 2=Deficiente Físico</para>
+            <para>Observação ICMS=20,70,90: apenas 3, 9 e 12 podem ser usados</para>
+            <para>Observação ICMS=30: apenas 6, 7 e 9 podem ser usados</para>
+            <para>Observação ICMS=40,41,50: de 1 a 11 podem ser usados</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.vICMSDeson">
+            <summary>
+            Valor do ICMS
+            <para>Informar apenas nas operações:</para>
+            <para>a) com produtos beneficiados com a desoneração condicional do ICMS.</para>
+            <para>b) destinadas à SUFRAMA, informando-se o valor que seria devido se não houvesse isenção.</para>
+            <para>c) de venda a órgão da administração pública direta e suas fundações e autarquias com isenção do ICMS. (NT 2011/004)</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.pCredSN">
+            <summary>
+            Alíquota aplicável de cálculo do crédito (Simples Nacional).
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.vCredICMSSN">
+            <summary>
+            Valor crédito do ICMS que pode ser aproveitado nos termos do art. 23 da LC 123 (Simples Nacional)
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.vBCSTDest">
+            <summary>
+            Valor da BC do ICMS ST da UF destino
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.vICMSSTDest">
+            <summary>
+            Valor do ICMS ST da UF destino
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.vICMSOp">
+            <summary>
+            Valor do ICMS da Operação.
+            Valor como se não tivesse o diferimento
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.pDif">
+            <summary>
+            Percentual do diferimento
+            <para>No caso de diferimento total, informar o percentual de diferimento "100".</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.vICMSDif">
+            <summary>
+            Valor do ICMS diferido
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.adRemICMS">
+            <summary>
+            Alíquota ad rem do imposto
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.vICMSMono">
+            <summary>
+            Valor do ICMS próprio
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.adRemICMSReten">
+            <summary>
+            Alíquota ad rem do imposto com retenção
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.vICMSMonoReten">
+            <summary>
+            Valor do ICMS com retenção
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.vICMSMonoDif">
+            <summary>
+            Valor do ICMS diferido
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.adRemICMSRet">
+            <summary>
+            Alíquota ad rem do imposto retido anteriormente
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.qBCMono">
+            <summary>
+            Valor total da quantidade tributada do ICMS monofásico próprio
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.qBCMonoReten">
+            <summary>
+            Valor total da quantidade tributada do ICMS monofásico sujeito a retenção
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.pRedAdRem">
+            <summary>
+            Percentual de redução do valor da alíquota adRem
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.motRedAdRem">
+            <summary>
+            Motivo da redução do adRem
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.qBCMonoRet">
+            <summary>
+            Valor total da quantidade tributada do ICMS monofásico retido anteriormente
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.vICMSMonoOp">
+            <summary>
+            Valor do ICMS da operação 
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.pFCPDif">
+            <summary>
+            Percentual do diferimento do ICMS relativo ao Fundo de Combate à Pobreza(FCP)
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.vFCPDif">
+            <summary>
+            Valor do ICMS relativo ao Fundo de Combate à Pobreza (FCP) diferido
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ICMSProdutoNFe.vFCPEfet">
+             <summary>
+             Valor efetivo do ICMS relativo ao Fundo de Combate à Pobreza(FCP)
+             </summary>
+            
+        </member>
+        <member name="T:ACBrLib.NFe.IdentificacaoNFe">
+            <summary>
+            Identificação da Nota Fiscal eletrônica
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.cUF">
+            <sumary> 
+            Código da UF do emitente do Documento Fiscal 
+            </sumary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.cNF">
+            <summary>
+            Código Numérico que compõe a Chave de Acesso
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.natOp">
+            <summary>
+            Descrição da Natureza da Operação
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.indPag">
+            <summary>
+            Indicador da forma de pagamento
+            <para>0=Pagamento à vista;</para>
+            <para>1=Pagamento a prazo;</para>
+            <para>2=Outros.</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.modelo">
+            <summary>
+            Código do Modelo do Documento Fiscal
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.Serie">
+            <summary>
+            Série do Documento Fiscal
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.nNF">
+            <summary>
+            Número do Documento Fiscal
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.dhEmi">
+            <summary>
+            Data e hora de emissão do Documento Fiscal
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.dhSaiEnt">
+            <summary>
+            Data e hora de Saída ou da Entrada da Mercadoria/Produto
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.tpNF">
+            <summary>
+            Tipo de Operação
+            <para>0=Entrada;</para>
+            <para>1=Saída</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.idDest">
+            <summary>
+            Identificador de local de destino da operação
+            <para>1=Operação interna;</para>
+            <para>2=Operação interestadual;</para>
+            <para>3=Operação com exterior.</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.tpImp">
+            <summary>
+            Formato de Impressão do DANFE
+            <para>0=Sem geração de DANFE;</para>
+            <para>1=DANFE normal, Retrato;</para>
+            <para>2=DANFE normal, Paisagem;</para>
+            <para>3=DANFE Simplificado;</para>
+            <para>4=DANFE NFC-e;</para>
+            <para>5=DANFE NFC-e em mensagem eletrônica(o envio de
+            mensagem eletrônica pode ser feita de forma
+            simultânea com a impressão do DANFE; usar o tpImp=5
+            quando esta for a única forma de disponibilização do
+            DANFE).</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.tpEmis">
+            <summary>
+            Tipo de Emissão da NF-e
+            <para>1=Emissão normal (não em contingência);</para>
+            <para>2=Contingência FS-IA, com impressão do DANFE em
+            formulário de segurança;</para>
+            <para>3=Contingência SCAN(Sistema de Contingência do
+            Ambiente Nacional);</para>
+            <para>4=Contingência DPEC(Declaração Prévia da Emissão
+            em Contingência);</para>
+            <para>5=Contingência FS-DA, com impressão do DANFE em
+            formulário de segurança;</para>
+            <para>6=Contingência SVC-AN(SEFAZ Virtual de Contingência
+            do AN);</para>
+            <para>7=Contingência SVC-RS(SEFAZ Virtual de Contingência
+            do RS);</para>
+            <para>9=Contingência off-line da NFC-e(as demais opções de
+            contingência são válidas também para a NFC-e);</para>
+            <para>Observação: Para a NFC-e somente estão disponíveis e
+            são válidas as opções de contingência 5 e 9.</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.finNFe">
+            <summary>
+            Finalidade de emissão da NF-e
+            <para>1=NF-e normal;</para>
+            <para>2=NF-e complementar;</para>
+            <para>3=NF-e de ajuste;</para>
+            <para>4=Devolução de mercadoria.</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.indFinal">
+            <summary>
+            Indica operação com Consumidor final
+            <para>0=Normal;</para>
+            <para>1=Consumidor final;</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.indPres">
+            <summary>
+            Indicador de presença do comprador no estabelecimento comercial no momento da operação
+            <para>0=Não se aplica (por exemplo, Nota Fiscal complementar
+            ou de ajuste);</para>
+            <para>1=Operação presencial;</para>
+            <para>2=Operação não presencial, pela Internet;</para>
+            <para>3=Operação não presencial, Teleatendimento;</para>
+            <para>4=NFC-e em operação com entrega a domicílio;</para>
+            <para>9=Operação não presencial, outros.</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.procEmi">
+            <summary>
+            Processo de emissão da NF-e E B01 N 1-1 1 0=Emissão de NF-e com aplicativo do contribuinte
+            <para>0=Emissão de NF-e com aplicativo do contribuinte;</para>
+            <para>1=Emissão de NF-e avulsa pelo Fisco;</para>
+            <para>2=Emissão de NF-e avulsa, pelo contribuinte com seu
+            certificado digital, através do site do Fisco;</para>
+            <para>3=Emissão NF-e pelo contribuinte com aplicativo
+            fornecido pelo Fisco.</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.verProc">
+            <summary>
+            Versão do Processo de emissão da NF-e
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.dhCont">
+            <summary>
+            Data e Hora da entrada em contingência
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.xJust">
+            <summary>
+            Justificativa da entrada em contingência
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.NFref">
+            <summary>
+            O Grupo "NFref" deve ser preenchido apenas se existir documentos Referenciados na NFe (Tipos aceitos: NFE, CTE, ECF, NFP, NF)
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.cMunFG">
+            <summary>
+            Código do Município de Ocorrência do Fato Gerador
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.cMunFGIBS">
+            <summary>
+            Código do Município de Consumo, fato gerador do IBS/CBS
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.tpNFDebito">
+            <summary>
+            Tipo da Nota de Débito
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.tpNFCredito">
+            <summary>
+            Tipo da Nota de Crédito
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.tpEnteGov">
+            <summary>
+            Tipo de Ente Governamental
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.pRedutor">
+            <summary>
+            Percentual de redução de alíquota em compra governamental
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IdentificacaoNFe.tpOperGov">
+            <summary>
+            Tipo Operação Governamental
+            </summary>
+        </member>
+        <member name="T:ACBrLib.NFe.IIProdutoNFe">
+            <summary>
+            Imposto de Importação
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IIProdutoNFe.vBC">
+            <summary>
+            Valor BC do Imposto de Importação
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IIProdutoNFe.vDespAdu">
+            <summary>
+            Valor despesas aduaneiras
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IIProdutoNFe.vII">
+            <summary>
+            Valor Imposto de Importação
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IIProdutoNFe.vIOF">
+            <summary>
+            Valor Imposto sobre Operações Financeiras
+            </summary>
+        </member>
+        <member name="T:ACBrLib.NFe.ISProdutoNFe">
+            <summary>
+            Imposto de Importação
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ISProdutoNFe.CSTIS">
+            <summary>
+            Código da Situação Tributária do Imposto Seletivo
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ISProdutoNFe.cClassTribIS">
+            <summary>
+            Código de Classificação Tribútária do Imposto Seletivo
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ISProdutoNFe.vBCIS">
+            <summary>
+            Valor da Báse de Cálculo do Imposto Seletivo
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ISProdutoNFe.pIS">
+            <summary>
+            Alíquota do Imposto Seletivo
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ISProdutoNFe.pISEspec">
+            <summary>
+            Alíquota especifica por unidade de medida apropriada
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ISProdutoNFe.uTrib">
+            <summary>
+            Unidade de Medida Tributável
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ISProdutoNFe.qTrib">
+            <summary>
+            Quantidade Tributável
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ISProdutoNFe.vIS">
+            <summary>
+            VAlor do Imposto Seletivo
+            </summary>
+        </member>
+        <member name="T:ACBrLib.NFe.IBSCBSProdutoNFe">
+            <summary>
+            Imposto de Importação
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IBSCBSProdutoNFe.CST">
+            <summary>
+            Código de Classificação Tributária do IBS e CBS
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IBSCBSProdutoNFe.cClassTrib">
+            <summary>
+            Código de Classificação Tributária do IBS e CBS
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IBSCBSProdutoNFe.gIBSCBS">
+            <summary>
+            Grupo de Informações do IBS e da CBS
+            </summary>
+        </member>
+        <member name="T:ACBrLib.NFe.IPIProdutoNFe">
+            <summary>
+            Imposto sobre Produtos Industrializados
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IPIProdutoNFe.CST">
+            <summary>
+            Código da situação tributária do IPI
+            <para>00=Entrada com recuperação de crédito</para>
+            <para>01=Entrada tributada com alíquota zero</para>
+            <para>02=Entrada isenta</para>
+            <para>03=Entrada não-tributada</para>
+            <para>04=Entrada imune</para>
+            <para>05=Entrada com suspensão</para>
+            <para>49=Outras entradas</para>
+            <para>50=Saída tributada</para>
+            <para>51=Saída tributada com alíquota zero</para>
+            <para>52=Saída isenta</para>
+            <para>53=Saída não-tributada</para>
+            <para>54=Saída imune</para>
+            <para>55=Saída com suspensão</para>
+            <para>99=Outras saídas</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IPIProdutoNFe.clEnq">
+            <summary>
+            Classe de enquadramento do IPI para Cigarros e Bebidas
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IPIProdutoNFe.CNPJProd">
+            <summary>
+            CNPJ do produtor da mercadoria, quando diferente do emitente.
+            <para>Somente para os casos de exportação direta ou indireta.</para>
+            <para>Informar os zeros não significativos</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IPIProdutoNFe.cSelo">
+            <summary>
+            Código do selo de controle IPI
+            <para>Preenchimento conforme Atos Normativos editados pela Receita Federal</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IPIProdutoNFe.qSelo">
+            <summary>
+            Quantidade de selo de controle
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IPIProdutoNFe.cEnq">
+            <summary>
+            Código de Enquadramento Legal do IPI
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IPIProdutoNFe.vBC">
+            <summary>
+            Valor da BC do IPI
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IPIProdutoNFe.qUnid">
+            <summary>
+            Quantidade total na unidade padrão para tributação (somente para os produtos tributados por unidade)
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IPIProdutoNFe.vUnid">
+            <summary>
+            Valor por Unidade Tributável
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IPIProdutoNFe.pIPI">
+            <summary>
+            Alíquota do IPI
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IPIProdutoNFe.vIPI">
+            <summary>
+            Valor do IPI
+            </summary>
+        </member>
+        <member name="M:ACBrLib.NFe.NotaFiscal.ToString">
+            <inheritdoc/>
+        </member>
+        <member name="T:ACBrLib.NFe.PagamentoNFe">
+            <summary>
+            Formas de Pagamento
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.PagamentoNFe.tPag">
+            <summary>
+            Forma de pagamento
+            <para>01=Dinheiro</para>
+            <para>02=Cheque</para>
+            <para>03=Cartão de Crédito</para>
+            <para>04=Cartão de Débito</para>
+            <para>05=Crédito Loja</para>
+            <para>10=Vale Alimentação</para>
+            <para>11=Vale Refeição</para>
+            <para>12=Vale Presente</para>
+            <para>13=Vale Combustível</para>
+            <para>99=Outros</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.PagamentoNFe.vPag">
+            <summary>
+            Valor do Pagamento
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.PagamentoNFe.CNPJPag">
+            <summary>
+            Grupo Opcional
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.PagamentoNFe.CNPJ">
+            <summary>
+            CNPJ da Credenciadora de cartão de crédito e/ou débito
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.PagamentoNFe.tBand">
+            <summary>
+            Bandeira da operadora de cartão de crédito e/ou débito
+            <para>01=Visa</para>
+            <para>02=Mastercard</para>
+            <para>03=American Express</para>
+            <para>04=Sorocred</para>
+            <para>99=Outros</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.PagamentoNFe.cAut">
+            <summary>
+            Número de autorização da operação cartão de crédito e/ou débito
+            </summary>
+        </member>
+        <member name="T:ACBrLib.NFe.PISProdutoNFe">
+            <summary>
+            PIS
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.PISProdutoNFe.CST">
+            <summary>
+            Código de Situação Tributária do PIS
+            <para>01=Operação Tributável (base de cálculo = valor da operação alíquota normal(cumulativo/não cumulativo));</para>
+            <para>02=Operação Tributável(base de cálculo = valor da operação(alíquota diferenciada));</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.PISProdutoNFe.vBC">
+            <summary>
+            Valor da Base de Cálculo do PIS
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.PISProdutoNFe.pPIS">
+            <summary>
+            Alíquota do PIS (em percentual)
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.PISProdutoNFe.qBCProd">
+            <summary>
+            Quantidade Vendida
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.PISProdutoNFe.vAliqProd">
+            <summary>
+            Alíquota do PIS (em reais)
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.PISProdutoNFe.vPIS">
+            <summary>
+            Valor do PIS
+            </summary>
+        </member>
+        <member name="T:ACBrLib.NFe.PISSTProdutoNFe">
+            <summary>
+            PIS ST
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.PISSTProdutoNFe.vBC">
+            <summary>
+            Valor da Base de Cálculo do PIS
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.PISSTProdutoNFe.pPis">
+            <summary>
+            Alíquota do PIS (em percentual)
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.PISSTProdutoNFe.qBCProd">
+            <summary>
+            Quantidade Vendida
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.PISSTProdutoNFe.vAliqProd">
+            <summary>
+            Alíquota do PIS (em reais)
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.PISSTProdutoNFe.vPIS">
+            <summary>
+            Valor do PIS
+            </summary>
+        </member>
+        <member name="T:ACBrLib.NFe.ProdutoNFe">
+            <summary>
+            Produtos e Serviços da NF-e
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.nItem">
+            <summary>
+            Número do item (1-990)
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.cProd">
+            <summary>
+            Código do produto ou serviço
+            <para>Preencher com CFOP, caso se trate de itens não
+            relacionados com mercadorias/produtos e que o
+            contribuinte não possua codificação própria.</para>
+            <para>Formato: "CFOP9999"</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.cEAN">
+            <summary>
+            GTIN (Global Trade Item Number) do produto, antigo código EAN ou código de barras
+            <para>Preencher com o código GTIN-8, GTIN-12, GTIN-13 ou
+            GTIN-14 (antigos códigos EAN, UPC e DUN-14), não
+            informar o conteúdo da TAG em caso de o produto não
+            possuir este código.</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.cEANTrib">
+            <summary>
+            GTIN (Global Trade Item Number) da
+            unidade tributável, antigo código EAN
+            ou código de barras
+            <para>Preencher com o código GTIN-8, GTIN-12, GTIN-13 ou
+            GTIN-14 (antigos códigos EAN, UPC e DUN-14) da
+            unidade tributável do produto, não informar o conteúdo da
+            TAG em caso de o produto não possuir este código.</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.cBarra">
+            <summary>
+            Código de barras diferente do padrão GTIN
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.cBarraTrib">
+            <summary>
+            Código de Barras da unidade tributável que seja diferente do padrão GTIN
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.xProd">
+            <summary>
+            Descrição do produto ou serviço
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.NCM">
+            <summary>
+            Código NCM com 8 dígitos ou 2 dígitos(gênero)
+            <para>Código NCM (8 posições), informar o Capítulo do NCM
+            (gênero) quando a operação não for de comércio exterior
+            (importação/exportação) ou o produto não seja tributado
+            pelo IPI.</para>
+            <para>Em caso de item de serviço ou item que não
+            tenham produto (ex.transferência de crédito, crédito do
+            ativo imobilizado, etc.), informar o código 00 (zeros)(v2.0)</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.EXTIPI">
+            <summary>
+            EX_TIPI
+            <para>Preencher de acordo com o código EX da TIPI. Em caso de serviço, não incluir a TAG.</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.CFOP">
+            <summary>
+            Código Fiscal de Operações e Prestações.
+            Utilizar Tabela de CFOP.
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.uCom">
+            <summary>
+            Unidade Comercial
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.qCom">
+            <summary>
+            Quantidade Comercial
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.vUnCom">
+            <summary>
+            Valor Unitário de Comercialização
+            <para>Informar o valor unitário de comercialização do produto,
+            campo meramente informativo, o contribuinte pode utilizar
+            a precisão desejada(0-10 decimais).</para>
+            <para>Para efeitos de
+            cálculo, o valor unitário será obtido pela divisão do valor
+            do produto pela quantidade comercial. (v2.0)</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.vProd">
+            <summary>
+            Valor Total Bruto dos Produtos ou Serviços
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.uTrib">
+            <summary>
+            Unidade Tributável
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.qTrib">
+            <summary>
+            Quantidade Tributável
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.vUnTrib">
+            <summary>
+            Valor Unitário de tributação
+            <para>Informar o valor unitário de tributação do produto, campo
+            meramente informativo, o contribuinte pode utilizar a
+            precisão desejada(0-10 decimais).</para>
+            <para>Para efeitos de
+            cálculo, o valor unitário será obtido pela divisão do valor
+            do produto pela quantidade tributável (NT 2013/003).</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.vFrete">
+            <summary>
+            Valor Total do Frete
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.vSeg">
+            <summary>
+            Valor Total do Seguro
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.vDesc">
+            <summary>
+            Valor do Desconto
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.vOutro">
+            <summary>
+            Outras despesas acessórias
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.indTot">
+            <summary>
+            Indica se valor do Item (vProd) entra no valor total da NF-e (vProd)
+            <para>0=Valor do item (vProd) não compõe o valor total da NF-e</para>
+            <para>1=Valor do item (vProd) compõe o valor total da NF-e (vProd) (v2.0)</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.xPed">
+            <summary>
+            Número do Pedido de Compra (Opcional)
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.nItemPed">
+            <summary>
+            Item do Pedido de Compra (Opcional caso xPed esteja vazio)
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.nFCI">
+            <summary>
+            Número de controle da FCI - Ficha de Conteúdo de Importação (Opcional)
+            <para>Informação relacionada com a Resolução 13/2012 do
+            Senado Federal.</para>
+            <para>Formato: Algarismos, letras maiúsculas
+            de "A" a "F" e o caractere hífen. Exemplo:
+            B01F70AF-10BF-4B1F-848C-65FF57F616FE</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.nRECOPI">
+            <summary>
+            Número do RECOPI
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.pDevol">
+            <summary>
+            Percentual da mercadoria devolvida
+            <para>Observação: O valor máximo deste percentual é 100%,
+            no caso de devolução total da mercadoria.</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.vIPIDevol">
+            <summary>
+            Valor do IPI devolvido
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.vTotTrib">
+            <summary>
+            Valor aproximado total de tributos federais, estaduais e municipais.
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.infAdProd">
+            <summary>
+            Informações Adicionais do Produto
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.IS">
+            <summary>
+            Informações do Imposto Seletivo
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.IBSCBS">
+            <summary>
+            Informações do Imposto de Bens e Serviços - IBS e da Contribuição de Bens e Serviços - CBS
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.DFeReferenciado">
+            <summary>
+            Documento Fiscal Eletrônico Referenciado 
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ProdutoNFe.vItem">
+            <summary>
+            Valor Total do Item da NF-e
+            </summary>
+        </member>
+        <member name="T:ACBrLib.NFe.TotalNFe">
+            <summary>
+            O grupo de valores totais da NF-e deve ser informado com o somatório do campo correspondente dos itens.
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TotalNFe.vBC">
+            <summary>
+            Base de Cálculo do ICMS
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TotalNFe.vICMS">
+            <summary>
+            Valor Total do ICMS
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TotalNFe.vICMSDeson">
+            <summary>
+            Valor Total do ICMS desonerado
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TotalNFe.vBCST">
+            <summary>
+            Base de Cálculo do ICMS ST
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TotalNFe.vST">
+            <summary>
+            Valor Total do ICMS ST
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TotalNFe.vProd">
+            <summary>
+            Valor Total dos produtos e serviços
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TotalNFe.vFrete">
+            <summary>
+            Valor Total do Frete
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TotalNFe.vSeg">
+            <summary>
+            Valor Total do Seguro
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TotalNFe.vDesc">
+            <summary>
+            Valor Total do Desconto
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TotalNFe.vII">
+            <summary>
+            Valor Total do II
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TotalNFe.vIPI">
+            <summary>
+            Valor Total do IPI
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TotalNFe.vPIS">
+            <summary>
+            Valor do PIS
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TotalNFe.vCOFINS">
+            <summary>
+            Valor da COFINS
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TotalNFe.vOutro">
+            <summary>
+            Outras Despesas acessórias
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TotalNFe.vNF">
+            <summary>
+            Valor Total da NF-e
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TotalNFe.vTotTrib">
+            <summary>
+            Valor aproximado total de tributos federais, estaduais e municipais.
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TotalNFe.qBCMono">
+            <summary>
+            Valor total da quantidade tributada do ICMS monofásico próprio
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TotalNFe.vICMSMono">
+            <summary>
+            Valor total do ICMS monofásico próprio
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TotalNFe.qBCMonoReten">
+            <summary>
+            Valor total da quantidade tributada do ICMS monofásico sujeito a retenção
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TotalNFe.vICMSMonoReten">
+            <summary>
+            Valor total do ICMS monofásico sujeito a retenção
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TotalNFe.qBCMonoRet">
+            <summary>
+            Valor total da quantidade tributada do ICMS monofásico retido anteriormente
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TotalNFe.vICMSMonoRet">
+            <summary>
+            Valor total do ICMS monofásico retido anteriormente
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TotalNFe.ISTot">
+            <summary>
+            Grupo total do imposto seletivo
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TotalNFe.IBSCBSTot">
+            <summary>
+            Totais da NF-e com IBS e CBS
+            </summary>
+        </member>
+        <member name="T:ACBrLib.NFe.ISTotNFe">
+            <summary>
+            O grupo de valores totais da NF-e deve ser informado com o somatório do campo correspondente dos itens.
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.ISTotNFe.vIS">
+            <summary>
+            Total do imposto seletivo
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IBSCBSTotNFe.vBCIBSCBS">
+            <summary>
+            Valor total da BC do IBS e da CBS
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IBSCBSTotNFe.gIBS">
+            <summary>
+            Grupo total do IBS
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.IBSCBSTotNFe.gCBS">
+            <summary>
+            Grupo total do CBS
+            </summary>
+        </member>
+        <member name="T:ACBrLib.NFe.TransportadorNFe">
+            <summary>
+            Informações do Transporte da NF-e
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TransportadorNFe.modFrete">
+            <summary>
+            Modalidade do frete
+            <para>0=Por conta do emitente;</para>
+            <para>1=Por conta do destinatário/remetente;</para>
+            <para>2=Por conta de terceiros;</para>
+            <para>9=Sem frete;</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TransportadorNFe.CNPJCPF">
+            <summary>
+            CNPJ ou CPF do Transportador
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TransportadorNFe.xNome">
+            <summary>
+            Razão Social ou nome
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TransportadorNFe.IE">
+            <summary>
+            Inscrição Estadual do Transportador.
+            Informar:
+            <para>- Inscrição Estadual do transportador contribuinte do ICMS, sem caracteres de formatação(ponto, barra, hífen, etc.);</para>
+            <para>- Literal "ISENTO" para transportador isento de inscrição no cadastro de contribuintes ICMS;</para>
+            <para>- Não informar a tag para não contribuinte do ICMS</para>
+            <para>- A UF deve ser informada se informado uma IE.</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TransportadorNFe.xEnder">
+            <summary>
+            Endereço Completo
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TransportadorNFe.xMun">
+            <summary>
+            Nome do município
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TransportadorNFe.UF">
+            <summary>
+            Sigla da UF. Informar "EX" para Exterior.
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TransportadorNFe.vServ">
+            <summary>
+            Valor do Serviço
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TransportadorNFe.vBCRet">
+            <summary>
+            BC da Retenção do ICMS
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TransportadorNFe.pICMSRet">
+            <summary>
+            Alíquota da Retenção
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TransportadorNFe.vICMSRet">
+            <summary>
+            Valor do ICMS Retido
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TransportadorNFe.CFOP">
+            <summary>
+            CFOP de Serviço de Transporte
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TransportadorNFe.cMunFG">
+            <summary>
+            Código do município de ocorrência do fato gerador do ICMS do transporte. Utilizar a Tabela do IBGE.
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TransportadorNFe.Placa">
+            <summary>
+            Placa do Veículo
+            <para>Informar em um dos seguintes formatos: XXX9999, XXX999, XX9999 ou XXXX999.</para>
+            <para>Informar a placa em informações complementares quando a placa do veículo tiver lei de formação diversa.</para>
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TransportadorNFe.UFPlaca">
+            <summary>
+            Sigla da UF. Informar "EX" para Exterior.
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TransportadorNFe.RNTC">
+            <summary>
+            Registro Nacional de Transportador de Carga(ANTT)
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TransportadorNFe.vagao">
+            <summary>
+            Identificação do vagão
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.TransportadorNFe.balsa">
+            <summary>
+            Identificação da balsa
+            </summary>
+        </member>
+        <member name="T:ACBrLib.NFe.VolumeNFe">
+            <summary>
+            Informações do Transporte da NF-e - Volume
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.VolumeNFe.qVol">
+            <summary>
+            Quantidade de volumes transportados
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.VolumeNFe.esp">
+            <summary>
+            Espécie dos volumes transportados
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.VolumeNFe.Marca">
+            <summary>
+            Marca dos volumes transportados
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.VolumeNFe.nVol">
+            <summary>
+            Numeração dos volumes transportados
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.VolumeNFe.pesoL">
+            <summary>
+            Peso Líquido (em kg)
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.VolumeNFe.pesoB">
+            <summary>
+            Peso Bruto (em kg)
+            </summary>
+        </member>
+        <member name="T:ACBrLib.NFe.DFeReferenciado">
+            <summary>
+            Imposto de Importação
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.DFeReferenciado.chaveAcesso">
+            <summary>
+            Chave de acesso do DF-e referenciado
+            </summary>
+        </member>
+        <member name="P:ACBrLib.NFe.DFeReferenciado.nItem">
+            <summary>
+            Número do item do documento referenciado
+            </summary>
+        </member>
+    </members>
+</doc>

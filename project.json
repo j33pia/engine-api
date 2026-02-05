@@ -1,0 +1,57 @@
+{
+  "name": "engine-api",
+  "version": "2.0.0",
+  "description": "EngineAPI - Motor Fiscal SaaS B2B2B - NFe/NFCe Emission Engine",
+  "company": "3X Tecnologia",
+  "environment": "homologation",
+  "repository": {
+    "type": "local",
+    "path": "/Users/jhonnathan/.gemini/antigravity/scratch/engine_api"
+  },
+  "services": {
+    "backend": {
+      "name": "engine-api",
+      "port": 3001,
+      "technology": "NestJS",
+      "entrypoint": "backend/src/main.ts"
+    },
+    "frontend": {
+      "name": "engine-portal",
+      "port": 3002,
+      "technology": "Next.js",
+      "entrypoint": "frontend/app"
+    },
+    "database": {
+      "name": "engine-api-db",
+      "port": 5432,
+      "technology": "PostgreSQL"
+    }
+  },
+  "documentation": {
+    "architecture": "docs/architecture/ARCHITECTURE.md",
+    "api": "docs/api/API_REFERENCE.md",
+    "troubleshooting": "docs/troubleshooting/TROUBLESHOOTING.md"
+  },
+  "workflows": {
+    "devStart": ".agent/workflows/dev-start.md",
+    "quickRebuild": ".agent/workflows/quick-rebuild.md",
+    "prismaMigrate": ".agent/workflows/prisma-migrate.md",
+    "testEmission": ".agent/workflows/test-nfe-emission.md"
+  },
+  "knowledgeItems": ["nfe_engine_development_environment"],
+  "fiscalIntegration": {
+    "library": "ACBrLib",
+    "version": "MT",
+    "binaryPath": "backend/acbrlib/x64/libacbrnfe64.so",
+    "supportedDocuments": ["NFe", "NFCe"],
+    "sefazEnvironment": "homologation",
+    "supportedStates": ["GO"]
+  },
+  "security": {
+    "certificateEncryption": "AES-256",
+    "passwordHashing": "bcrypt",
+    "authentication": ["JWT", "API-Key"],
+    "authorization": "RBAC"
+  },
+  "lastUpdated": "2026-02-02"
+}

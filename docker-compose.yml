@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  engine-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: engine-api
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/engine_api_db?schema=public
+      - JWT_SECRET=your-super-secret-jwt-key-change-in-production
+      - NFE_PROVIDER=mock # Mock provider for Mac M1 development (remove for VPS/production)
+    depends_on:
+      - db
+    volumes:
+      - ./backend/src:/app/src # Hot reload source code
+      - ./uploads:/app/uploads
+      - ./xml:/app/xml
+      - ./acbrlib/libacbrnfe64.so:/app/acbrlib/x64/libacbrnfe64.so
+    command: sh -c "xvfb-run -a npm run start:prod"
+    platform: linux/amd64 # Force x86 for ACBrLib compatibility
+
+  db:
+    image: postgres:15-alpine
+    container_name: engine-api-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=engine_api_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
