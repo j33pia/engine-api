@@ -71,7 +71,9 @@ interface Invoice {
 
 export default function SandboxPage() {
   const [apiKey, setApiKey] = useState("");
-  const [documentModel, setDocumentModel] = useState<"55" | "65" | "58">("55"); // NFe=55, NFCe=65, MDFe=58
+  const [documentModel, setDocumentModel] = useState<
+    "55" | "65" | "58" | "nfse"
+  >("55"); // NFe=55, NFCe=65, MDFe=58, NFSe
 
   // Emission state
   const [emissionLoading, setEmissionLoading] = useState(false);
@@ -138,17 +140,48 @@ export default function SandboxPage() {
     2,
   );
 
+  const nfseTemplate = JSON.stringify(
+    {
+      tomador: {
+        cnpjCpf: "12345678000199",
+        razaoSocial: "Cliente Empresa LTDA",
+        email: "cliente@empresa.com",
+        telefone: "11999999999",
+        endereco: {
+          logradouro: "Rua Exemplo",
+          numero: "123",
+          bairro: "Centro",
+          codigoMunicipio: "3550308",
+          uf: "SP",
+          cep: "01310100",
+        },
+      },
+      servico: {
+        itemListaServico: "01.07",
+        discriminacao: "Serviços de desenvolvimento de software sob encomenda",
+        valorServicos: 2500.0,
+        codigoMunicipio: "3550308",
+        aliquotaIss: 0.05,
+        issRetido: false,
+      },
+    },
+    null,
+    2,
+  );
+
   const [jsonBody, setJsonBody] = useState(nfeTemplate);
 
   // Update JSON when model changes
-  const handleModelChange = (model: "55" | "65" | "58") => {
+  const handleModelChange = (model: "55" | "65" | "58" | "nfse") => {
     setDocumentModel(model);
     if (model === "55") {
       setJsonBody(nfeTemplate);
     } else if (model === "65") {
       setJsonBody(nfceTemplate);
-    } else {
+    } else if (model === "58") {
       setJsonBody(mdfeTemplate);
+    } else {
+      setJsonBody(nfseTemplate);
     }
   };
 
@@ -224,13 +257,17 @@ export default function SandboxPage() {
           ? "/nfe"
           : documentModel === "65"
             ? "/nfce"
-            : "/mdfe";
+            : documentModel === "58"
+              ? "/mdfe"
+              : "/nfse";
       const docType =
         documentModel === "55"
           ? "NFe"
           : documentModel === "65"
             ? "NFCe"
-            : "MDFe";
+            : documentModel === "58"
+              ? "MDFe"
+              : "NFSe";
 
       const res = await api.post(endpoint, JSON.parse(jsonBody), {
         headers: { "x-api-key": apiKey },
@@ -455,13 +492,23 @@ export default function SandboxPage() {
                     >
                       📦 MDFe
                     </Button>
+                    <Button
+                      variant={documentModel === "nfse" ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => handleModelChange("nfse")}
+                      className="flex-1"
+                    >
+                      🧾 NFSe
+                    </Button>
                   </div>
                   <p className="text-xs text-muted-foreground">
                     {documentModel === "55"
                       ? "NFe (Mod. 55): Nota Fiscal Eletrônica B2B"
                       : documentModel === "65"
                         ? "NFCe (Mod. 65): Cupom Fiscal Varejo"
-                        : "MDFe (Mod. 58): Manifesto de Documentos Fiscais"}
+                        : documentModel === "58"
+                          ? "MDFe (Mod. 58): Manifesto de Documentos Fiscais"
+                          : "NFSe: Nota Fiscal de Serviço Eletrônica"}
                   </p>
                 </div>
                 <div className="space-y-2">
