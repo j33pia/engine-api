@@ -10,6 +10,7 @@ import { MdfeModule } from './mdfe/mdfe.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { WebhooksModule } from './webhooks/webhooks.module';
 import { NfseModule } from './nfse/nfse.module';
+import { AdminModule } from './admin/admin.module';
 import { CommonModule } from './common/common.module';
 import { TenantContextMiddleware } from './common/middleware/tenant-context.middleware';
 import { AuditInterceptor } from './common/interceptors/audit.interceptor';
@@ -23,6 +24,7 @@ import { PartnersModule } from './partners/partners.module';
     ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
     CommonModule,
+    AdminModule,
     CompaniesModule,
     NfeModule,
     NfceModule,

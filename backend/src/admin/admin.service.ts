@@ -1,0 +1,250 @@
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+
+@Injectable()
+export class AdminService {
+  constructor(private prisma: PrismaService) {}
+
+  /**
+   * Get global overview metrics for SuperAdmin dashboard
+   */
+  async getOverview() {
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+    // Partner counts
+    const [totalPartners, activePartners] = await Promise.all([
+      this.prisma.partner.count(),
+      this.prisma.partner.count({
+        where: {
+          subscription: {
+            status: 'ACTIVE',
+          },
+        },
+      }),
+    ]);
+
+    // Invoice counts by model (last 30 days)
+    const invoiceCounts = await this.prisma.invoice.groupBy({
+      by: ['model'],
+      where: {
+        createdAt: { gte: thirtyDaysAgo },
+      },
+      _count: true,
+    });
+
+    // NFSe counts (last 30 days)
+    const nfseCount = await this.prisma.nfse.count({
+      where: {
+        createdAt: { gte: thirtyDaysAgo },
+      },
+    });
+
+    // MDFe counts (last 30 days)
+    const mdfeCount = await this.prisma.mdfe.count({
+      where: {
+        createdAt: { gte: thirtyDaysAgo },
+      },
+    });
+
+    // Total invoices processed
+    const totalInvoices = await this.prisma.invoice.count();
+    const invoicesLast30Days = await this.prisma.invoice.count({
+      where: { createdAt: { gte: thirtyDaysAgo } },
+    });
+
+    // Format invoice counts by model
+    const invoicesByModel = {
+      '55': invoiceCounts.find((i) => i.model === '55')?._count || 0, // NFe
+      '65': invoiceCounts.find((i) => i.model === '65')?._count || 0, // NFCe
+      '58': mdfeCount, // MDFe
+      nfse: nfseCount,
+    };
+
+    // Recent audit logs count
+    const recentAuditLogs = await this.prisma.auditLog.count({
+      where: {
+        createdAt: { gte: thirtyDaysAgo },
+      },
+    });
+
+    // Error rate (last 24h)
+    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    const [totalLogs24h, errorLogs24h] = await Promise.all([
+      this.prisma.auditLog.count({
+        where: { createdAt: { gte: oneDayAgo } },
+      }),
+      this.prisma.auditLog.count({
+        where: {
+          createdAt: { gte: oneDayAgo },
+          status: 'ERROR',
+        },
+      }),
+    ]);
+
+    const errorRate =
+      totalLogs24h > 0 ? (errorLogs24h / totalLogs24h) * 100 : 0;
+
+    return {
+      partners: {
+        total: totalPartners,
+        active: activePartners,
+        inactive: totalPartners - activePartners,
+      },
+      invoices: {
+        total: totalInvoices,
+        last30Days: invoicesLast30Days,
+        byModel: invoicesByModel,
+      },
+      audit: {
+        logsLast30Days: recentAuditLogs,
+        errorRate24h: Math.round(errorRate * 100) / 100,
+      },
+      system: {
+        status: 'healthy',
+        uptime: process.uptime(),
+        timestamp: now.toISOString(),
+      },
+    };
+  }
+
+  /**
+   * List all partners with usage metrics
+   */
+  async listPartners(page = 1, limit = 20) {
+    const skip = (page - 1) * limit;
+
+    const [partners, total] = await Promise.all([
+      this.prisma.partner.findMany({
+        skip,
+        take: limit,
+        include: {
+          subscription: {
+            include: { plan: true },
+          },
+          _count: {
+            select: { issuers: true },
+          },
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.partner.count(),
+    ]);
+
+    return {
+      data: partners.map((p) => ({
+        id: p.id,
+        name: p.name,
+        cnpj: p.cnpj,
+        email: p.email,
+        createdAt: p.createdAt,
+        subscription: p.subscription
+          ? {
+              status: p.subscription.status,
+              plan: p.subscription.plan.name,
+            }
+          : null,
+        issuersCount: p._count.issuers,
+      })),
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  /**
+   * Get partner details with full usage
+   */
+  async getPartnerDetails(partnerId: string) {
+    const partner = await this.prisma.partner.findUnique({
+      where: { id: partnerId },
+      include: {
+        subscription: { include: { plan: true } },
+        issuers: {
+          select: {
+            id: true,
+            name: true,
+            cnpj: true,
+            _count: { select: { invoices: true } },
+          },
+        },
+        metrics: {
+          orderBy: { period: 'desc' },
+          take: 12,
+        },
+      },
+    });
+
+    if (!partner) return null;
+
+    return partner;
+  }
+
+  /**
+   * Get global audit logs
+   */
+  async getAuditLogs(params: {
+    page?: number;
+    limit?: number;
+    partnerId?: string;
+    action?: string;
+    status?: string;
+  }) {
+    const { page = 1, limit = 50, partnerId, action, status } = params;
+    const skip = (page - 1) * limit;
+
+    const where: any = {};
+    if (partnerId) where.partnerId = partnerId;
+    if (action) where.action = { contains: action };
+    if (status) where.status = status;
+
+    const [logs, total] = await Promise.all([
+      this.prisma.auditLog.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          partner: { select: { name: true } },
+        },
+      }),
+      this.prisma.auditLog.count({ where }),
+    ]);
+
+    return {
+      data: logs,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  /**
+   * Create a new partner
+   */
+  async createPartner(data: { name: string; cnpj?: string; email?: string }) {
+    return this.prisma.partner.create({
+      data: {
+        name: data.name,
+        cnpj: data.cnpj,
+        email: data.email,
+      },
+    });
+  }
+
+  /**
+   * Update partner status
+   */
+  async updatePartnerStatus(partnerId: string, status: 'ACTIVE' | 'SUSPENDED') {
+    return this.prisma.subscription.update({
+      where: { partnerId },
+      data: { status },
+    });
+  }
+}
