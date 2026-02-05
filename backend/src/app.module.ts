@@ -7,6 +7,7 @@ import { NfeModule } from './nfe/nfe.module';
 import { NfceModule } from './nfce/nfce.module';
 import { MdfeModule } from './mdfe/mdfe.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { WebhooksModule } from './webhooks/webhooks.module';
 
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
@@ -23,6 +24,7 @@ import { PartnersModule } from './partners/partners.module';
     AuthModule,
     PartnersModule,
     AnalyticsModule,
+    WebhooksModule,
   ],
   controllers: [AppController],
   providers: [AppService],

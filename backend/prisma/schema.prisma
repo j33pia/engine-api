@@ -13,21 +13,24 @@ datasource db {
 // --------------------------------------
 
 model Partner {
-  id           String   @id @default(uuid())
-  name         String
-  cnpj         String?  @unique
-  email        String?
-  phone        String?
-  webhookUrl   String?  // URL para receber notificações de NFe
-  apiKey       String   @unique @default(uuid()) // Chave Mestra da Software House
+  id             String   @id @default(uuid())
+  name           String
+  cnpj           String?  @unique
+  email          String?
+  phone          String?
+  webhookUrl     String?  // URL para receber notificações
+  webhookSecret  String?  // Secret para assinatura HMAC
+  webhookEvents  Json?    // Array de eventos assinados
+  apiKey         String   @unique @default(uuid()) // Chave Mestra da Software House
 
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  users        User[]
-  issuers      Issuer[]
-  subscription Subscription?
-  metrics      UsageMetric[]
+  users          User[]
+  issuers        Issuer[]
+  subscription   Subscription?
+  metrics        UsageMetric[]
+  webhookDeliveries WebhookDelivery[]
 
   @@map("partners")
 }
@@ -351,4 +354,28 @@ model Mdfe {
   updatedAt     DateTime    @updatedAt
   
   @@map("mdfes")
+}
+
+// ======================
+// Webhooks
+// ======================
+
+model WebhookDelivery {
+  id          String   @id @default(uuid())
+  
+  partnerId   String
+  partner     Partner  @relation(fields: [partnerId], references: [id])
+  
+  eventType   String   // invoice.authorized, invoice.rejected, etc.
+  payload     Json     // Full event payload
+  status      String   @default("pending") // pending, success, failed
+  attempts    Int      @default(0)
+  lastError   String?  @db.Text
+  
+  createdAt   DateTime @default(now())
+  deliveredAt DateTime?
+  
+  @@index([partnerId])
+  @@index([status])
+  @@map("webhook_deliveries")
 }
