@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/select";
 import { FileText, Download, Search, Truck } from "lucide-react";
 import { api } from "@/services/api";
+import { useIssuer } from "@/contexts/issuer-context";
 
 interface Mdfe {
   id: string;
@@ -45,6 +46,7 @@ interface Mdfe {
 }
 
 export default function MdfePage() {
+  const { selectedIssuer, isAllSelected } = useIssuer();
   const [mdfes, setMdfes] = useState<Mdfe[]>([]);
   const [filteredMdfes, setFilteredMdfes] = useState<Mdfe[]>([]);
   const [loading, setLoading] = useState(true);
@@ -53,8 +55,13 @@ export default function MdfePage() {
 
   useEffect(() => {
     const loadMdfes = async () => {
+      setLoading(true);
       try {
-        const res = await api.get("/mdfe");
+        const params =
+          !isAllSelected && selectedIssuer?.id
+            ? { companyId: selectedIssuer.id }
+            : {};
+        const res = await api.get("/mdfe", { params });
         setMdfes(res.data);
       } catch (err) {
         console.error(err);
@@ -63,7 +70,7 @@ export default function MdfePage() {
       }
     };
     loadMdfes();
-  }, []);
+  }, [selectedIssuer, isAllSelected]);
 
   useEffect(() => {
     let filtered = mdfes;

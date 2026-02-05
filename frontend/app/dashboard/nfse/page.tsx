@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/select";
 import { FileText, Download, Search, Receipt } from "lucide-react";
 import { api } from "@/services/api";
+import { useIssuer } from "@/contexts/issuer-context";
 
 interface Nfse {
   id: string;
@@ -48,6 +49,7 @@ interface Nfse {
 }
 
 export default function NfsePage() {
+  const { selectedIssuer, isAllSelected } = useIssuer();
   const [nfses, setNfses] = useState<Nfse[]>([]);
   const [filteredNfses, setFilteredNfses] = useState<Nfse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,8 +58,13 @@ export default function NfsePage() {
 
   useEffect(() => {
     const loadNfses = async () => {
+      setLoading(true);
       try {
-        const res = await api.get("/nfse");
+        const params =
+          !isAllSelected && selectedIssuer?.id
+            ? { companyId: selectedIssuer.id }
+            : {};
+        const res = await api.get("/nfse", { params });
         setNfses(res.data);
       } catch (err) {
         console.error(err);
@@ -66,7 +73,7 @@ export default function NfsePage() {
       }
     };
     loadNfses();
-  }, []);
+  }, [selectedIssuer, isAllSelected]);
 
   useEffect(() => {
     let filtered = nfses;

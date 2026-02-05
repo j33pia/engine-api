@@ -15,17 +15,31 @@ export interface Issuer {
   name: string;
   cnpj: string;
   tradeName?: string;
+  ie?: string;
+  im?: string;
+  crt?: number;
+  email?: string;
+  phone?: string;
   city?: string;
   state?: string;
 }
+
+// Representa "Todos os emissores"
+export const ALL_ISSUERS: Issuer = {
+  id: "ALL",
+  name: "Todos os Emissores",
+  cnpj: "",
+};
 
 interface IssuerContextType {
   issuers: Issuer[];
   selectedIssuer: Issuer | null;
   loading: boolean;
   selectIssuer: (issuer: Issuer) => void;
+  selectAll: () => void;
   refreshIssuers: () => Promise<void>;
   addIssuer: (issuer: Issuer) => void;
+  isAllSelected: boolean;
 }
 
 const IssuerContext = createContext<IssuerContextType | undefined>(undefined);
@@ -33,7 +47,9 @@ const IssuerContext = createContext<IssuerContextType | undefined>(undefined);
 export function IssuerProvider({ children }: { children: ReactNode }) {
   const { data: session } = useSession();
   const [issuers, setIssuers] = useState<Issuer[]>([]);
-  const [selectedIssuer, setSelectedIssuer] = useState<Issuer | null>(null);
+  const [selectedIssuer, setSelectedIssuer] = useState<Issuer | null>(
+    ALL_ISSUERS,
+  );
   const [loading, setLoading] = useState(true);
 
   const fetchIssuers = async () => {
@@ -51,15 +67,15 @@ export function IssuerProvider({ children }: { children: ReactNode }) {
       const data = response.data as Issuer[];
       setIssuers(data);
 
-      // Restaurar seleção do localStorage ou selecionar primeiro
+      // Restaurar seleção do localStorage ou manter "Todos"
       const savedId = localStorage.getItem("selectedIssuerId");
-      const saved = data.find((i: Issuer) => i.id === savedId);
-      if (saved) {
-        setSelectedIssuer(saved);
-      } else if (data.length > 0) {
-        setSelectedIssuer(data[0]);
-        localStorage.setItem("selectedIssuerId", data[0].id);
+      if (savedId && savedId !== "ALL") {
+        const saved = data.find((i: Issuer) => i.id === savedId);
+        if (saved) {
+          setSelectedIssuer(saved);
+        }
       }
+      // Se não encontrou ou era ALL, mantém ALL_ISSUERS
     } catch (error) {
       console.error("Erro ao buscar emissores:", error);
     } finally {
@@ -78,6 +94,11 @@ export function IssuerProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("selectedIssuerId", issuer.id);
   };
 
+  const selectAll = () => {
+    setSelectedIssuer(ALL_ISSUERS);
+    localStorage.setItem("selectedIssuerId", "ALL");
+  };
+
   const addIssuer = (issuer: Issuer) => {
     setIssuers((prev) => [...prev, issuer]);
     selectIssuer(issuer);
@@ -87,6 +108,8 @@ export function IssuerProvider({ children }: { children: ReactNode }) {
     await fetchIssuers();
   };
 
+  const isAllSelected = selectedIssuer?.id === "ALL";
+
   return (
     <IssuerContext.Provider
       value={{
@@ -94,8 +117,10 @@ export function IssuerProvider({ children }: { children: ReactNode }) {
         selectedIssuer,
         loading,
         selectIssuer,
+        selectAll,
         refreshIssuers,
         addIssuer,
+        isAllSelected,
       }}
     >
       {children}

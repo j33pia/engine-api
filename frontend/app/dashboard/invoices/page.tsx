@@ -49,9 +49,13 @@ interface Invoice {
   model: string; // 55 = NFe, 65 = NFCe
   createdAt: string;
   fiscalEvents?: FiscalEvent[];
+  companyId?: string;
 }
 
+import { useIssuer } from "@/contexts/issuer-context";
+
 export default function InvoicesPage() {
+  const { selectedIssuer, isAllSelected } = useIssuer();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [filteredInvoices, setFilteredInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
@@ -61,8 +65,14 @@ export default function InvoicesPage() {
 
   useEffect(() => {
     const loadInvoices = async () => {
+      setLoading(true);
       try {
-        const res = await api.get("/nfe");
+        // Se tem emissor específico selecionado, filtra por companyId
+        const params =
+          !isAllSelected && selectedIssuer?.id
+            ? { companyId: selectedIssuer.id }
+            : {};
+        const res = await api.get("/nfe", { params });
         setInvoices(res.data);
       } catch (err) {
         console.error(err);
@@ -71,7 +81,7 @@ export default function InvoicesPage() {
       }
     };
     loadInvoices();
-  }, []);
+  }, [selectedIssuer, isAllSelected]);
 
   useEffect(() => {
     let filtered = invoices;
