@@ -5,6 +5,24 @@
 
 ---
 
+## 🌐 Idioma Preferencial
+
+**Português (Brasil)** é o idioma padrão para:
+
+- Mensagens de commit
+- Documentação (README, CHANGELOG, docs/)
+- Comentários de código
+- Interface do usuário (labels, mensagens)
+- Comunicação com o usuário
+
+**Exceções (podem ser em inglês):**
+
+- Nomes de variáveis, funções, classes
+- Mensagens de erro técnicas
+- Termos técnicos sem tradução adequada (API, endpoint, token, etc.)
+
+---
+
 ## 🎯 Core Philosophy
 
 ```
