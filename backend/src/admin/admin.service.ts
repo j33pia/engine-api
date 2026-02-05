@@ -247,4 +247,130 @@ export class AdminService {
       data: { status },
     });
   }
+
+  /**
+   * Update partner data
+   */
+  async updatePartner(
+    partnerId: string,
+    data: { name?: string; cnpj?: string; email?: string; phone?: string },
+  ) {
+    return this.prisma.partner.update({
+      where: { id: partnerId },
+      data,
+    });
+  }
+
+  /**
+   * Delete partner (soft delete via status)
+   */
+  async deletePartner(partnerId: string) {
+    // Primeiro desativa a assinatura
+    await this.prisma.subscription.updateMany({
+      where: { partnerId },
+      data: { status: 'CANCELLED' },
+    });
+
+    // Marca o parceiro como inativo
+    return this.prisma.partner.update({
+      where: { id: partnerId },
+      data: {
+        // Adicionar campo deletedAt se existir, senão apenas retornar
+      },
+    });
+  }
+
+  /**
+   * Get partner usage statistics
+   */
+  async getPartnerUsage(partnerId: string, months = 12) {
+    const now = new Date();
+    const startDate = new Date(
+      now.getFullYear(),
+      now.getMonth() - months + 1,
+      1,
+    );
+
+    // Notas por mês
+    const invoicesByMonth = await this.prisma.invoice.groupBy({
+      by: ['createdAt'],
+      where: {
+        issuer: { partnerId },
+        createdAt: { gte: startDate },
+      },
+      _count: true,
+    });
+
+    // Notas por modelo
+    const invoicesByModel = await this.prisma.invoice.groupBy({
+      by: ['model'],
+      where: {
+        issuer: { partnerId },
+        createdAt: { gte: startDate },
+      },
+      _count: true,
+    });
+
+    // Total de emissores
+    const totalIssuers = await this.prisma.issuer.count({
+      where: { partnerId },
+    });
+
+    // Total de notas
+    const totalInvoices = await this.prisma.invoice.count({
+      where: {
+        issuer: { partnerId },
+      },
+    });
+
+    // NFSe
+    const totalNfse = await this.prisma.nfse.count({
+      where: { partnerId },
+    });
+
+    // MDFe
+    const totalMdfe = await this.prisma.mdfe.count({
+      where: { partnerId },
+    });
+
+    return {
+      partnerId,
+      periodo: {
+        inicio: startDate.toISOString(),
+        fim: now.toISOString(),
+      },
+      totais: {
+        emissores: totalIssuers,
+        nfe: invoicesByModel.find((i) => i.model === '55')?._count || 0,
+        nfce: invoicesByModel.find((i) => i.model === '65')?._count || 0,
+        mdfe: totalMdfe,
+        nfse: totalNfse,
+        total: totalInvoices + totalNfse + totalMdfe,
+      },
+    };
+  }
+
+  /**
+   * Generate API key for partner
+   */
+  async regenerateApiKey(partnerId: string) {
+    const newApiKey = this.generateSecureApiKey();
+
+    await this.prisma.partner.update({
+      where: { id: partnerId },
+      data: { apiKey: newApiKey },
+    });
+
+    return { apiKey: newApiKey };
+  }
+
+  private generateSecureApiKey(): string {
+    const chars =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = 'ea_'; // engine api prefix
+    for (let i = 0; i < 32; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  }
 }

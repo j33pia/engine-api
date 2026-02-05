@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/table";
 import { Plus, Search, Building2, Eye } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import Link from "next/link";
 
 interface Parceiro {
   id: string;
@@ -186,9 +187,11 @@ export default function PaginaParceiros() {
                       {new Date(parceiro.criadoEm).toLocaleDateString("pt-BR")}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="sm">
-                        <Eye className="h-4 w-4" />
-                      </Button>
+                      <Link href={`/admin/partners/${parceiro.id}`}>
+                        <Button variant="ghost" size="sm">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </Link>
                     </TableCell>
                   </TableRow>
                 ))}
