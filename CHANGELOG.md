@@ -10,6 +10,14 @@ O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ### Adicionado
 
+#### Multi-tenancy Enhancement
+
+- **TenantContextMiddleware** - AsyncLocalStorage para propagação de contexto
+- **@CurrentTenant decorator** - Extração fácil do tenantId em controllers
+- **PartnerGuard** - Prevenção de acesso cross-tenant
+- **AuditInterceptor** - Logging automático de todas operações por tenant
+- **AuditLog model** - Modelo Prisma para trilha de auditoria
+
 #### Fase 6: NFSe - Nota Fiscal de Serviço Eletrônica
 
 - **NfseModule** no backend (usando ACBrNFSe)
