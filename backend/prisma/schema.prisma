@@ -31,6 +31,7 @@ model Partner {
   subscription   Subscription?
   metrics        UsageMetric[]
   webhookDeliveries WebhookDelivery[]
+  auditLogs      AuditLog[]
 
   @@map("partners")
 }
@@ -97,6 +98,27 @@ model UsageMetric {
 
   @@unique([partnerId, period])
   @@map("usage_metrics")
+}
+
+// Audit Logging for Multi-tenancy
+model AuditLog {
+  id        String   @id @default(uuid())
+  
+  partnerId String
+  partner   Partner  @relation(fields: [partnerId], references: [id])
+  
+  userId    String?  // Optional: logged-in user
+  action    String   // e.g., "POST /nfe", "DELETE /companies/123"
+  status    String   @default("SUCCESS") // SUCCESS, ERROR
+  duration  Int?     // Request duration in ms
+  ip        String?
+  metadata  Json?    // Sanitized request body
+  
+  createdAt DateTime @default(now())
+  
+  @@index([partnerId])
+  @@index([createdAt])
+  @@map("audit_logs")
 }
 
 // Eventos Fiscais (CC-e, Cancelamento, etc)
