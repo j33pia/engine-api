@@ -32,8 +32,8 @@ export function Sidebar({ className }: SidebarProps) {
       icon: FileText,
     },
     {
-      title: "Clientes (Tenants)",
-      href: "/dashboard/tenants",
+      title: "Gerenciar Emissores",
+      href: "/dashboard/companies",
       icon: Building,
     },
     {
