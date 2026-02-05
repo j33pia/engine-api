@@ -220,6 +220,138 @@ Closes #42
 
 ---
 
+## 🌿 Git Workflow (Automatic)
+
+### Repository
+
+- **GitHub:** https://github.com/j33pia/engine-api
+- **Default Branch:** `main`
+- **Protection:** Require PR for production changes
+
+### Branching Strategy (Git Flow Simplified)
+
+```
+main          ────●────●────●────●──── (produção)
+                   \         /
+feature/xyz         ●───●───●           (desenvolvimento)
+```
+
+| Branch      | Purpose                    | Naming                   |
+| ----------- | -------------------------- | ------------------------ |
+| `main`      | Produção estável           | -                        |
+| `feature/*` | Novas funcionalidades      | `feature/add-webhooks`   |
+| `fix/*`     | Correções de bugs          | `fix/certificate-upload` |
+| `hotfix/*`  | Correções urgentes em prod | `hotfix/auth-crash`      |
+| `docs/*`    | Apenas documentação        | `docs/update-readme`     |
+
+### I WILL AUTOMATICALLY:
+
+#### On Every Feature Completion:
+
+```bash
+# 1. Stage all changes
+git add .
+
+# 2. Commit with conventional message
+git commit -m "feat(module): description"
+
+# 3. Push to remote
+git push origin main
+```
+
+#### On Bug Fixes:
+
+```bash
+git add .
+git commit -m "fix(module): description
+
+Root cause: [explanation]
+Solution: [what was done]"
+git push origin main
+```
+
+#### On Documentation Updates:
+
+```bash
+git add .
+git commit -m "docs: update [file]"
+git push origin main
+```
+
+### Commit Frequency
+
+| Situation            | When to Commit                  |
+| -------------------- | ------------------------------- |
+| New Feature Complete | Immediately                     |
+| Bug Fixed            | Immediately                     |
+| Phase Completed      | Immediately                     |
+| Significant Change   | Before moving to next task      |
+| End of Session       | Always push uncommitted changes |
+
+### Git Commands Reference
+
+```bash
+# Check status
+git status
+
+# View recent commits
+git log --oneline -10
+
+# Create feature branch
+git checkout -b feature/new-feature
+
+# Merge to main
+git checkout main
+git merge feature/new-feature
+
+# Push with tags
+git tag v2.1.0
+git push origin main --tags
+
+# Revert last commit (keep changes)
+git reset --soft HEAD~1
+
+# Revert last commit (discard changes)
+git reset --hard HEAD~1
+```
+
+### GitHub Integration
+
+```bash
+# Create Pull Request
+gh pr create --title "feat: description" --body "Details..."
+
+# View open PRs
+gh pr list
+
+# Merge PR
+gh pr merge --squash
+
+# Create Release
+gh release create v2.1.0 --notes "Release notes..."
+```
+
+### Before Every Push Checklist
+
+- [ ] Code compiles without errors
+- [ ] No console.log/debug statements
+- [ ] Tests passing
+- [ ] Documentation updated
+- [ ] CHANGELOG entry added
+- [ ] Commit message follows convention
+
+### Automatic Push Schedule
+
+| Event                | Action                    |
+| -------------------- | ------------------------- |
+| Feature complete     | Commit + Push             |
+| Bug fixed            | Commit + Push             |
+| Documentation update | Commit + Push             |
+| End of work session  | Commit + Push all changes |
+| Breaking change      | Commit + Push + Tag       |
+
+---
+
 ## 🚀 Deployment Checklist
 
 Before every deploy:
