@@ -160,6 +160,7 @@ model Issuer {
   products     Product[]
   customers    Customer[]
   mdfes        Mdfe[]
+  nfses        Nfse[]
   
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
@@ -379,3 +380,45 @@ model WebhookDelivery {
   @@index([status])
   @@map("webhook_deliveries")
 }
+
+// ======================
+// NFSe - Nota Fiscal de Serviço
+// ======================
+
+model Nfse {
+  id                String   @id @default(uuid())
+  number            String   // Número da NFSe
+  verificationCode  String?  // Código de verificação
+  status            String   @default("CREATED") // CREATED, AUTHORIZED, CANCELED
+  
+  // Serviço
+  codigoMunicipio   String   // Código IBGE do município
+  itemListaServico  String   // Item da LC 116/2003
+  discriminacao     String   @db.Text
+  valorServicos     Decimal  @db.Decimal(15, 2)
+  valorDeducoes     Decimal? @db.Decimal(15, 2)
+  valorIss          Decimal? @db.Decimal(15, 2)
+  aliquotaIss       Decimal? @db.Decimal(5, 4)
+  
+  // Tomador
+  tomadorCnpjCpf    String
+  tomadorRazao      String
+  
+  // XML
+  xmlContent        String?  @db.Text
+  
+  // Relacionamentos
+  issuerId          String
+  issuer            Issuer   @relation(fields: [issuerId], references: [id])
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  authorizedAt      DateTime?
+  canceledAt        DateTime?
+  
+  @@index([issuerId])
+  @@index([codigoMunicipio])
+  @@index([status])
+  @@map("nfses")
+}
+

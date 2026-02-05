@@ -36,12 +36,12 @@ EngineAPI é uma plataforma SaaS multi-tenant para emissão de documentos fiscai
 
 ## 📄 Documentos Suportados
 
-| Modelo | Documento                        | Status       |
-| ------ | -------------------------------- | ------------ |
-| 55     | NFe - Nota Fiscal Eletrônica     | ✅ Produção  |
-| 65     | NFCe - Nota Fiscal de Consumidor | ✅ Produção  |
-| 58     | MDFe - Manifesto de Documentos   | ✅ Produção  |
-| -      | NFSe - Nota Fiscal de Serviço    | 🔄 Planejado |
+| Modelo | Documento                        | Status      |
+| ------ | -------------------------------- | ----------- |
+| 55     | NFe - Nota Fiscal Eletrônica     | ✅ Produção |
+| 65     | NFCe - Nota Fiscal de Consumidor | ✅ Produção |
+| 58     | MDFe - Manifesto de Documentos   | ✅ Produção |
+| -      | NFSe - Nota Fiscal de Serviço    | 🔄 Em Dev   |
 
 ---
 
@@ -205,6 +205,17 @@ Senha: admin123
 | POST   | `/webhooks/secret/regenerate` | Novo secret HMAC       |
 
 **Eventos:** `invoice.authorized`, `invoice.rejected`, `invoice.canceled`, `mdfe.authorized`, `mdfe.closed`, `certificate.expiring`
+
+### NFSe (Em desenvolvimento)
+
+| Método | Endpoint             | Descrição    |
+| ------ | -------------------- | ------------ |
+| POST   | `/nfse`              | Emitir NFSe  |
+| GET    | `/nfse`              | Listar NFSes |
+| GET    | `/nfse/:id`          | Detalhes     |
+| POST   | `/nfse/:id/cancelar` | Cancelar     |
+| GET    | `/nfse/pdf/:id`      | Download PDF |
+| GET    | `/nfse/xml/:id`      | Download XML |
 
 ---
 

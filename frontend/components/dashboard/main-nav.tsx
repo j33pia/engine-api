@@ -12,6 +12,7 @@ import {
   BarChart3,
   FileSearch,
   Truck,
+  Receipt,
 } from "lucide-react";
 
 export function MainNav({
@@ -62,6 +63,18 @@ export function MainNav({
           >
             <Truck className="mr-2 h-4 w-4" />
             Monitor de MDF-e
+          </Link>
+          <Link
+            href="/dashboard/nfse"
+            className={cn(
+              "flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
+              pathname === "/dashboard/nfse"
+                ? "bg-accent text-accent-foreground"
+                : "transparent",
+            )}
+          >
+            <Receipt className="mr-2 h-4 w-4" />
+            Monitor de NFS-e
           </Link>
           <Link
             href="/dashboard/companies"

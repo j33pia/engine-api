@@ -8,6 +8,7 @@ import { NfceModule } from './nfce/nfce.module';
 import { MdfeModule } from './mdfe/mdfe.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { WebhooksModule } from './webhooks/webhooks.module';
+import { NfseModule } from './nfse/nfse.module';
 
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
@@ -21,6 +22,7 @@ import { PartnersModule } from './partners/partners.module';
     NfeModule,
     NfceModule,
     MdfeModule,
+    NfseModule,
     AuthModule,
     PartnersModule,
     AnalyticsModule,

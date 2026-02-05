@@ -135,6 +135,7 @@ sequenceDiagram
 | `NfeModule`       | Emissão NFe (Modelo 55)              |
 | `NfceModule`      | Emissão NFCe (Modelo 65)             |
 | `MdfeModule`      | Emissão MDFe (Modelo 58)             |
+| `NfseModule`      | Emissão NFSe (Municipal)             |
 | `WebhooksModule`  | Notificações webhook, HMAC, retry    |
 | `PartnersModule`  | Gestão de parceiros                  |
 
@@ -145,6 +146,7 @@ sequenceDiagram
 | `/dashboard`                   | `page.tsx` | Dashboard principal |
 | `/dashboard/invoices`          | `page.tsx` | Monitor de notas    |
 | `/dashboard/mdfe`              | `page.tsx` | Monitor MDFe        |
+| `/dashboard/nfse`              | `page.tsx` | Monitor NFSe        |
 | `/dashboard/settings`          | `page.tsx` | Configurações       |
 | `/dashboard/settings/webhooks` | `page.tsx` | Config de Webhooks  |
 | `/dashboard/sandbox`           | `page.tsx` | Área de testes      |

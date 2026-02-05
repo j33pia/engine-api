@@ -391,22 +391,29 @@ Before every deploy:
 For significant decisions, create ADR:
 
 ```markdown
-# ADR-001: Use ACBrLib for SEFAZ Integration
+# ADR-001: Use ACBrLib for ALL Fiscal Document Integration
 
-## Status: Accepted
+## Status: Accepted (MANDATORY)
 
 ## Context
 
-Precisamos integrar com a SEFAZ para emissão de NFe/NFCe/MDFe.
+Precisamos integrar com a SEFAZ para emissão de documentos fiscais eletrônicos.
 
 ## Decision
 
-Usar ACBrLib via Node FFI.
+**OBRIGATÓRIO**: Usar ACBrLib via Node FFI para TODOS os documentos fiscais:
+
+- **ACBrNFe** - Nota Fiscal Eletrônica (Modelo 55)
+- **ACBrNFCe** - Nota Fiscal de Consumidor (Modelo 65)
+- **ACBrMDFe** - Manifesto de Documentos (Modelo 58)
+- **ACBrNFSe** - Nota Fiscal de Serviço (ABRASF/Municipal)
 
 ## Consequences
 
-- ✅ Biblioteca madura e testada
-- ✅ Suporte a todos os documentos fiscais
+- ✅ Biblioteca matura e testada (20+ anos)
+- ✅ Suporte a TODOS os documentos fiscais brasileiros
+- ✅ Gerencia múltiplos WebServices municipais para NFSe
+- ✅ Comunidade ativa e documentação completa
 - ❌ Requer Linux para produção
 - ❌ Binding C++ pode ser frágil
 ```

@@ -6,6 +6,35 @@ O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ---
 
+## [2.3.0] - 2026-02-05 (WIP)
+
+### Adicionado
+
+#### Fase 6: NFSe - Nota Fiscal de Serviço Eletrônica
+
+- **NfseModule** no backend (usando ACBrNFSe)
+  - `POST /nfse` - Emitir NFSe
+  - `GET /nfse` - Listar NFSes
+  - `GET /nfse/:id` - Detalhes
+  - `POST /nfse/:id/cancelar` - Cancelar
+  - `GET /nfse/pdf/:id` - Download PDF
+  - `GET /nfse/xml/:id` - Download XML
+- **Mock NfseProvider** para desenvolvimento
+- **Suporte a 300+ municípios** (via ACBrNFSe)
+  - Padrões: ABRASF, Ginfes, ISSNet, Betha, IPM
+- **Frontend** - Página de monitor (`/dashboard/nfse`)
+  - Tabela com filtros por status e busca
+  - Download de XML e PDF
+  - Link na sidebar com ícone Receipt 🧾
+
+### Modificado
+
+- Schema Prisma: novo modelo `Nfse`
+- Relação `nfses[]` no Issuer
+- Regra ACBr expandida no CLAUDE.md (ADR-001)
+
+---
+
 ## [2.2.0] - 2026-02-05
 
 ### Adicionado
