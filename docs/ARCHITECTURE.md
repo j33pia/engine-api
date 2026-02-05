@@ -135,17 +135,19 @@ sequenceDiagram
 | `NfeModule`       | Emissão NFe (Modelo 55)              |
 | `NfceModule`      | Emissão NFCe (Modelo 65)             |
 | `MdfeModule`      | Emissão MDFe (Modelo 58)             |
+| `WebhooksModule`  | Notificações webhook, HMAC, retry    |
 | `PartnersModule`  | Gestão de parceiros                  |
 
 ### Frontend (Next.js)
 
-| Rota                  | Componente | Descrição           |
-| --------------------- | ---------- | ------------------- |
-| `/dashboard`          | `page.tsx` | Dashboard principal |
-| `/dashboard/invoices` | `page.tsx` | Monitor de notas    |
-| `/dashboard/mdfe`     | `page.tsx` | Monitor MDFe        |
-| `/dashboard/settings` | `page.tsx` | Configurações       |
-| `/dashboard/sandbox`  | `page.tsx` | Área de testes      |
+| Rota                           | Componente | Descrição           |
+| ------------------------------ | ---------- | ------------------- |
+| `/dashboard`                   | `page.tsx` | Dashboard principal |
+| `/dashboard/invoices`          | `page.tsx` | Monitor de notas    |
+| `/dashboard/mdfe`              | `page.tsx` | Monitor MDFe        |
+| `/dashboard/settings`          | `page.tsx` | Configurações       |
+| `/dashboard/settings/webhooks` | `page.tsx` | Config de Webhooks  |
+| `/dashboard/sandbox`           | `page.tsx` | Área de testes      |
 
 ## Segurança
 
@@ -238,6 +240,12 @@ docker buildx build --platform linux/amd64 \
 - Prometheus endpoint (planejado)
 
 ## Changelog
+
+### v2.2.0 (2026-02)
+
+- ✅ WebhooksModule (Fase 4)
+- ✅ Assinatura HMAC para webhooks
+- ✅ Página de configuração no frontend
 
 ### v2.0.0 (2026-02)
 

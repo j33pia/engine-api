@@ -6,6 +6,45 @@ O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ---
 
+## [2.2.0] - 2026-02-05
+
+### Adicionado
+
+#### Fase 4: Webhooks
+
+- **WebhooksModule** no backend
+  - `GET /webhooks/config` - Obter configuração
+  - `PATCH /webhooks/config` - Atualizar URL e eventos
+  - `POST /webhooks/test` - Enviar evento de teste
+  - `GET /webhooks/logs` - Histórico de entregas
+  - `POST /webhooks/secret/regenerate` - Gerar novo secret
+- **Eventos suportados**:
+  - `invoice.authorized` - NFe/NFCe autorizada
+  - `invoice.rejected` - NFe/NFCe rejeitada
+  - `invoice.canceled` - Cancelamento autorizado
+  - `mdfe.authorized` - MDFe autorizado
+  - `mdfe.closed` - MDFe encerrado
+  - `certificate.expiring` - Certificado expirando
+- **Segurança**:
+  - Assinatura HMAC (header `X-Webhook-Signature`)
+  - Secret mascarado na UI
+  - Retry automático (5 tentativas com backoff)
+- **Frontend** - Página de configuração (`/dashboard/settings/webhooks`)
+  - Formulário de URL e seleção de eventos
+  - Visualização/cópia/regeneração do secret
+  - Histórico de entregas com status
+  - Documentação de integração HMAC
+- **Componentes UI**:
+  - `Checkbox` (shadcn/ui + radix)
+  - Link na sidebar com ícone Bell 🔔
+
+### Modificado
+
+- Schema Prisma: campos `webhookSecret`, `webhookEvents` no Partner
+- Novo modelo `WebhookDelivery` para logs de entrega
+
+---
+
 ## [2.1.0] - 2026-02-04
 
 ### Adicionado

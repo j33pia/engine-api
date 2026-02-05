@@ -64,9 +64,9 @@ EngineAPI é uma plataforma SaaS multi-tenant para emissão de documentos fiscai
 │  │   Auth   │ │ Analytics│ │Companies │ │ Partners │           │
 │  └──────────┘ └──────────┘ └──────────┘ └──────────┘           │
 │                                                                  │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐                        │
-│  │   NFe    │ │   NFCe   │ │   MDFe   │ ← Documentos Fiscais   │
-│  └──────────┘ └──────────┘ └──────────┘                        │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐           │
+│  │   NFe    │ │   NFCe   │ │   MDFe   │ │Webhooks  │           │
+│  └──────────┘ └──────────┘ └──────────┘ └──────────┘           │
 │                      │                                           │
 │              ┌───────┴───────┐                                   │
 │              │ ACBrWrapper   │ ← Integração ACBrLib              │
@@ -194,6 +194,18 @@ Senha: admin123
 | POST   | `/partners/api-key/regenerate` | Nova API Key       |
 | PATCH  | `/partners/webhook`            | Configurar webhook |
 
+### Webhooks
+
+| Método | Endpoint                      | Descrição              |
+| ------ | ----------------------------- | ---------------------- |
+| GET    | `/webhooks/config`            | Obter configuração     |
+| PATCH  | `/webhooks/config`            | Atualizar URL/eventos  |
+| POST   | `/webhooks/test`              | Enviar evento de teste |
+| GET    | `/webhooks/logs`              | Histórico de entregas  |
+| POST   | `/webhooks/secret/regenerate` | Novo secret HMAC       |
+
+**Eventos:** `invoice.authorized`, `invoice.rejected`, `invoice.canceled`, `mdfe.authorized`, `mdfe.closed`, `certificate.expiring`
+
 ---
 
 ## 📊 Dashboard
@@ -227,10 +239,10 @@ O dashboard oferece visão completa das operações:
 - [x] **Fase 1**: Core API (NFe, NFCe, MDFe)
 - [x] **Fase 2**: Dashboard Analytics
 - [x] **Fase 3**: Swagger/Developer Experience
+- [x] **Fase 4**: Webhooks (notificações em tempo real)
 
 ### 🔄 Próximas Fases
 
-- [ ] **Fase 4**: Webhooks (notificações em tempo real)
 - [ ] **Fase 5**: Billing/Monetização (Stripe)
 - [ ] **Fase 6**: NFSe (Nota Fiscal de Serviço)
 - [ ] **Fase 7**: Multi-tenant Isolation
