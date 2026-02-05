@@ -122,4 +122,12 @@ export class AdminController {
       status,
     });
   }
+
+  // ============ SISTEMA ============
+
+  @Get('system/health')
+  @ApiOperation({ summary: 'Obter status de saúde do sistema' })
+  async getSystemHealth() {
+    return this.adminService.getSystemHealth();
+  }
 }
