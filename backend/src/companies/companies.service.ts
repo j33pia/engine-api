@@ -83,6 +83,9 @@ export class CompaniesService {
     file: Express.Multer.File,
     password: string,
   ) {
+    // First validate that the password is correct
+    await this.validateCertificatePassword(file.path, password);
+
     // Read real certificate expiry date using openssl
     const certExpiry = await this.extractCertificateExpiry(file.path, password);
 
@@ -96,6 +99,46 @@ export class CompaniesService {
         certExpiry,
       },
     });
+  }
+
+  /**
+   * Validate certificate password before proceeding
+   * Throws BadRequestException if password is incorrect
+   */
+  private async validateCertificatePassword(
+    filePath: string,
+    password: string,
+  ): Promise<void> {
+    const { exec } = await import('child_process');
+    const { promisify } = await import('util');
+    const execAsync = promisify(exec);
+
+    try {
+      // Try to open the certificate with the provided password
+      // -info -noout just outputs info without extracting anything
+      const command = `openssl pkcs12 -in "${filePath}" -info -noout -passin pass:"${password}" 2>&1`;
+      await execAsync(command);
+      this.logger.log('Certificate password validated successfully');
+    } catch (error: any) {
+      // Check if it's a password error
+      const errorOutput = error.stderr || error.message || '';
+      if (
+        errorOutput.includes('invalid password') ||
+        errorOutput.includes('mac verify failure') ||
+        errorOutput.includes('PKCS12 routines')
+      ) {
+        this.logger.warn(`Invalid certificate password for file ${filePath}`);
+        const { BadRequestException } = await import('@nestjs/common');
+        throw new BadRequestException('Senha do certificado inválida');
+      }
+
+      // Other errors (file not found, corrupted, etc.)
+      this.logger.error(`Certificate validation error: ${error.message}`);
+      const { BadRequestException } = await import('@nestjs/common');
+      throw new BadRequestException(
+        'Arquivo de certificado inválido ou corrompido',
+      );
+    }
   }
 
   /**
