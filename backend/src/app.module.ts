@@ -18,6 +18,7 @@ import { AuditInterceptor } from './common/interceptors/audit.interceptor';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { PartnersModule } from './partners/partners.module';
+import { SchedulerModule } from './scheduler/scheduler.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { PartnersModule } from './partners/partners.module';
     PartnersModule,
     AnalyticsModule,
     WebhooksModule,
+    SchedulerModule,
   ],
   controllers: [AppController],
   providers: [
