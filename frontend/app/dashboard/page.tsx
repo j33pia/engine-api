@@ -22,6 +22,7 @@ import {
   Building2,
   AlertTriangle,
 } from "lucide-react";
+import { useIssuer } from "@/contexts/issuer-context";
 
 interface AnalyticsData {
   billing: {
@@ -64,12 +65,19 @@ interface AnalyticsData {
 
 export default function DashboardPage() {
   const { data: session } = useSession();
+  const { selectedIssuer, isAllSelected } = useIssuer();
   const [metrics, setMetrics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (session?.accessToken) {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/analytics/dashboard`, {
+      // Construir URL com filtro opcional
+      const params =
+        !isAllSelected && selectedIssuer?.id
+          ? `?companyId=${selectedIssuer.id}`
+          : "";
+
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/analytics/dashboard${params}`, {
         headers: {
           Authorization: `Bearer ${session.accessToken}`,
         },
@@ -84,7 +92,7 @@ export default function DashboardPage() {
           setLoading(false);
         });
     }
-  }, [session]);
+  }, [session, selectedIssuer, isAllSelected]);
 
   if (loading) {
     return (

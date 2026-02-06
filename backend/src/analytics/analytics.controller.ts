@@ -53,8 +53,20 @@ Retorna todas as métricas do dashboard do parceiro:
     },
   })
   @ApiResponse({ status: 401, description: 'Não autorizado' })
-  async getDashboard(@Request() req: any) {
-    return this.analyticsService.getDashboardMetrics(req.user.partnerId);
+  @ApiQuery({
+    name: 'companyId',
+    required: false,
+    description:
+      'ID do emissor para filtrar métricas (se omitido, retorna consolidado)',
+  })
+  async getDashboard(
+    @Request() req: any,
+    @Query('companyId') companyId?: string,
+  ) {
+    return this.analyticsService.getDashboardMetrics(
+      req.user.partnerId,
+      companyId,
+    );
   }
 
   @Get('invoices-by-period')

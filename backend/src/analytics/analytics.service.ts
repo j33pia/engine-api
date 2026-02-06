@@ -8,14 +8,19 @@ export class AnalyticsService {
 
   constructor(private prisma: PrismaService) {}
 
-  async getDashboardMetrics(partnerId: string): Promise<AnalyticsResponseDto> {
+  async getDashboardMetrics(
+    partnerId: string,
+    issuerId?: string,
+  ): Promise<AnalyticsResponseDto> {
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const period = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
-    // Buscar issuers do partner
+    // Buscar issuers do partner (filtrar por issuerId se fornecido)
+    const issuerWhere = issuerId ? { partnerId, id: issuerId } : { partnerId };
+
     const issuers = await this.prisma.issuer.findMany({
-      where: { partnerId },
+      where: issuerWhere,
       select: { id: true, name: true, cnpj: true, certExpiry: true },
     });
 
