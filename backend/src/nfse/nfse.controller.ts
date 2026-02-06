@@ -50,13 +50,13 @@ export class NfseController {
   })
   @ApiResponse({ status: 200, description: 'Lista de NFSes' })
   @ApiQuery({
-    name: 'issuerId',
+    name: 'companyId',
     required: false,
-    description: 'Filtrar por empresa',
+    description: 'Filtrar por empresa (ID do emissor)',
   })
-  async list(@Request() req: any, @Query('issuerId') issuerId?: string) {
-    if (issuerId) {
-      return this.nfseService.listNfses(issuerId, req.user.partnerId);
+  async list(@Request() req: any, @Query('companyId') companyId?: string) {
+    if (companyId) {
+      return this.nfseService.listNfses(companyId, req.user.partnerId);
     }
     return this.nfseService.listAllNfses(req.user.partnerId);
   }

@@ -675,8 +675,8 @@ export class NfeController {
   }
 
   @Get()
-  findAll() {
-    return this.nfeService.findAll();
+  findAll(@Query('companyId') companyId?: string) {
+    return this.nfeService.findAll(companyId);
   }
 
   @Get(':id')

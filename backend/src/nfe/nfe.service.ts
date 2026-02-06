@@ -256,14 +256,18 @@ export class NfeService {
     return nfe;
   }
 
-  async findAll() {
+  async findAll(issuerId?: string) {
+    const where = issuerId ? { issuerId } : {};
     return this.prisma.invoice.findMany({
+      where,
       include: {
         issuer: true,
         fiscalEvents: {
           orderBy: { sequence: 'asc' },
         },
       },
+      orderBy: { createdAt: 'desc' },
+      take: 100,
     });
   }
 

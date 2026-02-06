@@ -323,14 +323,14 @@ export class AdminService {
       },
     });
 
-    // NFSe
+    // NFSe (filtrar via issuer)
     const totalNfse = await this.prisma.nfse.count({
-      where: { partnerId },
+      where: { issuer: { partnerId } },
     });
 
-    // MDFe
+    // MDFe (filtrar via issuer)
     const totalMdfe = await this.prisma.mdfe.count({
-      where: { partnerId },
+      where: { issuer: { partnerId } },
     });
 
     return {

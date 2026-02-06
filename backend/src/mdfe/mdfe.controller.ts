@@ -71,8 +71,8 @@ export class MdfeController {
    * Listar MDFes emitidas
    */
   @Get()
-  async findAll() {
-    return this.mdfeService.findAll();
+  async findAll(@Query('companyId') companyId?: string) {
+    return this.mdfeService.findAll(companyId);
   }
 
   /**
