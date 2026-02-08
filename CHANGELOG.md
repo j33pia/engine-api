@@ -21,6 +21,17 @@ O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
   - Cancelamento e inutilização de numeração
 - Swagger decorators em todos os endpoints NFCe
 
+#### MDF-e — Módulo Independente com ACBr
+
+- **MdfeWrapperService** — Wrapper próprio (desacoplado do NFe)
+- **IMdfeProvider** — Interface com emitir, encerrar e cancelar
+- **MockMdfeProvider** — Provider mock para desenvolvimento
+- **RealMdfeProvider** — Provider real via ACBrLibMDFe
+  - XML MDFe v3.00 com veículo, condutor e documentos vinculados
+  - Encerramento e cancelamento de MDFe
+- npm `@projetoacbr/acbrlib-mdfe-node` instalado
+- Swagger decorators em todos os endpoints MDFe
+
 #### Certificado Digital
 
 - **CertificateSchedulerService** — Verificação diária de vencimento (8h BRT)

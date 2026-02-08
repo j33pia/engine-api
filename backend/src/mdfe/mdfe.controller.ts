@@ -16,33 +16,44 @@ import {
   ApiBearerAuth,
   ApiOperation,
   ApiResponse,
+  ApiQuery,
 } from '@nestjs/swagger';
 import type { Response } from 'express';
 import { MdfeService } from './mdfe.service';
+import { MdfeWrapperService } from './mdfe-wrapper.service';
 import { CreateMdfeDto } from './dto/create-mdfe.dto';
 import { ApiKeyGuard } from '../auth/api-key.guard';
-import { AcbrWrapperService } from '../nfe/acbr-wrapper.service';
 import { PrismaService } from '../prisma/prisma.service';
 
+/**
+ * Controller MDF-e (Modelo 58)
+ *
+ * Endpoints para emissão, consulta, encerramento e download de MDFe.
+ * Utiliza o MdfeWrapperService independente do módulo NFe.
+ */
 @ApiTags('🚚 MDFe')
 @Controller('mdfe')
 export class MdfeController {
   constructor(
     private readonly mdfeService: MdfeService,
-    private readonly acbrService: AcbrWrapperService,
+    private readonly mdfeWrapper: MdfeWrapperService,
     private readonly prisma: PrismaService,
   ) {}
 
   /**
-   * Status do serviço MDFe
+   * Status do serviço MDFe na SEFAZ
    */
   @Get('status')
+  @ApiOperation({ summary: 'Verificar status do serviço MDFe' })
+  @ApiQuery({ name: 'uf', required: false, example: 'SP' })
+  @ApiResponse({ status: 200, description: 'Status do serviço retornado' })
   async checkStatus(@Query('uf') uf: string = 'SP') {
-    const status = await this.acbrService.checkStatus(uf, '00000000000000');
+    const status = await this.mdfeWrapper.checkStatus(uf, '00000000000000');
     return {
       ...status,
       model: '58',
       service: 'MDFe',
+      provider: this.mdfeWrapper.isUsingMock() ? 'mock' : 'acbr',
     };
   }
 
@@ -51,6 +62,11 @@ export class MdfeController {
    */
   @Post()
   @UseGuards(ApiKeyGuard)
+  @ApiOperation({ summary: 'Emitir MDFe (Modelo 58)' })
+  @ApiBearerAuth()
+  @ApiResponse({ status: 201, description: 'MDFe emitido com sucesso' })
+  @ApiResponse({ status: 400, description: 'Dados inválidos' })
+  @ApiResponse({ status: 403, description: 'Sem emissor configurado' })
   async create(@Body() createMdfeDto: CreateMdfeDto, @Request() req: any) {
     const partner = req.partner;
 
@@ -71,6 +87,9 @@ export class MdfeController {
    * Listar MDFes emitidas
    */
   @Get()
+  @ApiOperation({ summary: 'Listar MDFes emitidos' })
+  @ApiQuery({ name: 'companyId', required: false })
+  @ApiResponse({ status: 200, description: 'Lista de MDFes' })
   async findAll(@Query('companyId') companyId?: string) {
     return this.mdfeService.findAll(companyId);
   }
@@ -79,6 +98,9 @@ export class MdfeController {
    * Download PDF do DAMDFE
    */
   @Get('pdf/:accessKey')
+  @ApiOperation({ summary: 'Download do DAMDFE (PDF/HTML)' })
+  @ApiResponse({ status: 200, description: 'DAMDFE do MDFe' })
+  @ApiResponse({ status: 404, description: 'MDFe não encontrado' })
   async downloadPdf(
     @Param('accessKey') accessKey: string,
     @Res() res: Response,
@@ -250,7 +272,7 @@ export class MdfeController {
 
   <div class="footer">
     <p>Documento Auxiliar do Manifesto Eletrônico de Documentos Fiscais</p>
-    <p>Ambiente: HOMOLOGAÇÃO (Mock)</p>
+    <p>Ambiente: ${this.mdfeWrapper.isUsingMock() ? 'HOMOLOGAÇÃO (Mock)' : 'PRODUÇÃO'}</p>
   </div>
 </body>
 </html>
@@ -268,6 +290,9 @@ export class MdfeController {
    * Download XML do MDFe
    */
   @Get('xml/:accessKey')
+  @ApiOperation({ summary: 'Download do XML do MDFe' })
+  @ApiResponse({ status: 200, description: 'XML do MDFe' })
+  @ApiResponse({ status: 404, description: 'MDFe não encontrado' })
   async downloadXml(
     @Param('accessKey') accessKey: string,
     @Res() res: Response,
@@ -317,7 +342,7 @@ export class MdfeController {
     <nProt>000000000000000</nProt>
     <dhRecbto>${new Date().toISOString()}</dhRecbto>
     <cStat>100</cStat>
-    <xMotivo>Autorizado o uso do MDF-e (Mock)</xMotivo>
+    <xMotivo>Autorizado o uso do MDF-e</xMotivo>
   </protMDFe>
 </mdfeProc>`;
 
@@ -334,6 +359,10 @@ export class MdfeController {
    */
   @Post(':accessKey/encerrar')
   @UseGuards(ApiKeyGuard)
+  @ApiOperation({ summary: 'Encerrar MDFe autorizado' })
+  @ApiBearerAuth()
+  @ApiResponse({ status: 200, description: 'MDFe encerrado' })
+  @ApiResponse({ status: 404, description: 'MDFe não encontrado' })
   async encerrar(
     @Param('accessKey') accessKey: string,
     @Body('ufEncerramento') ufEncerramento: string,
@@ -356,6 +385,8 @@ export class MdfeController {
    * Buscar MDFe por ID
    */
   @Get(':id')
+  @ApiOperation({ summary: 'Buscar MDFe por ID' })
+  @ApiResponse({ status: 200, description: 'Detalhes do MDFe' })
   async findOne(@Param('id') id: string) {
     return this.mdfeService.findOne(id);
   }

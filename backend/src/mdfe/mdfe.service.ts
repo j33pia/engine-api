@@ -1,15 +1,21 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { AcbrWrapperService } from '../nfe/acbr-wrapper.service';
+import { MdfeWrapperService } from './mdfe-wrapper.service';
 import { CreateMdfeDto } from './dto/create-mdfe.dto';
 
+/**
+ * Serviço de MDF-e (Modelo 58)
+ *
+ * Gerencia a emissão de Manifestos Eletrônicos de Documentos Fiscais
+ * utilizando o MdfeWrapperService independente.
+ */
 @Injectable()
 export class MdfeService {
   private readonly logger = new Logger(MdfeService.name);
 
   constructor(
     private prisma: PrismaService,
-    private acbrService: AcbrWrapperService,
+    private mdfeWrapper: MdfeWrapperService,
   ) {}
 
   /**
@@ -95,8 +101,8 @@ export class MdfeService {
     };
 
     try {
-      // Emitir via ACBr wrapper
-      const emission = await this.acbrService.emitirMdfe(dadosMdfe, issuer);
+      // Emitir via MdfeWrapper (Mock ou Real)
+      const emission = await this.mdfeWrapper.emitir(dadosMdfe, issuer);
 
       // Atualizar MDFe com resultado
       const updatedMdfe = await this.prisma.mdfe.update({
@@ -184,8 +190,8 @@ export class MdfeService {
       where: { id: issuerId },
     });
 
-    // Encerrar via ACBr
-    const result = await this.acbrService.encerrarMdfe(
+    // Encerrar via MdfeWrapper
+    const result = await this.mdfeWrapper.encerrar(
       accessKey,
       ufEncerramento,
       issuer,
