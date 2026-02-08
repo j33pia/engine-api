@@ -1,32 +1,27 @@
-import { Module, Logger } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { NfseController } from './nfse.controller';
 import { NfseService } from './nfse.service';
-import { PrismaModule } from '../prisma/prisma.module';
+import { NfseWrapperService } from './nfse-wrapper.service';
 import { MockNfseProvider } from './providers/mock-nfse.provider';
+import { RealNfseProvider } from './providers/real-nfse.provider';
 import { NFSE_PROVIDER } from './providers/nfse-provider.interface';
-
-const logger = new Logger('NfseModule');
-
-// Determina qual provider usar baseado no ambiente
-const nfseProvider =
-  process.env.NFSE_PROVIDER === 'real'
-    ? null // ACBrNfseProvider - implementar quando necessário
-    : MockNfseProvider;
-
-if (nfseProvider === MockNfseProvider) {
-  console.log(' Using MOCK NFSe Provider (Dev/Mac)');
-}
+import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, ConfigModule],
   controllers: [NfseController],
   providers: [
     NfseService,
+    NfseWrapperService,
+    MockNfseProvider,
+    RealNfseProvider,
     {
       provide: NFSE_PROVIDER,
-      useClass: MockNfseProvider, // Usar Mock por padrão
+      useFactory: (wrapper: NfseWrapperService) => wrapper.activeProvider,
+      inject: [NfseWrapperService],
     },
   ],
-  exports: [NfseService],
+  exports: [NfseService, NfseWrapperService],
 })
 export class NfseModule {}

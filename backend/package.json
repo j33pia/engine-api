@@ -36,6 +36,7 @@
     "@prisma/client": "^5.10.2",
     "@projetoacbr/acbrlib-mdfe-node": "^1.0.8",
     "@projetoacbr/acbrlib-nfe-node": "^1.0.8",
+    "@projetoacbr/acbrlib-nfse-node": "^1.0.11",
     "@types/multer": "^2.0.0",
     "axios": "^1.13.4",
     "bcrypt": "^6.0.0",

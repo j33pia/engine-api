@@ -32,6 +32,16 @@ O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 - npm `@projetoacbr/acbrlib-mdfe-node` instalado
 - Swagger decorators em todos os endpoints MDFe
 
+#### NFS-e — Provider Real com ACBr
+
+- **NfseWrapperService** — Wrapper próprio com seleção automática
+- **RealNfseProvider** — Provider real via ACBrLibNFSe
+  - Suporte ABRASF 2.04, Ginfes, ISSNet, Betha, IPM
+  - Formato RPS/INI para emissão
+  - Cancelamento e consulta de NFSe
+- npm `@projetoacbr/acbrlib-nfse-node` instalado
+- `useFactory` para injeção do provider ativo via `NFSE_PROVIDER` token
+
 #### Certificado Digital
 
 - **CertificateSchedulerService** — Verificação diária de vencimento (8h BRT)
