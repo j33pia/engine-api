@@ -6,6 +6,42 @@ O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ---
 
+## [2.4.0] - 2026-02-08
+
+### Adicionado
+
+#### NFC-e — Módulo Independente com ACBr
+
+- **NfceWrapperService** — Wrapper próprio (desacoplado do NFe)
+- **INfceProvider** — Interface com emitir, cancelar e inutilizar
+- **MockNfceProvider** — Provider mock para desenvolvimento
+- **RealNfceProvider** — Provider real via ACBrLibNFe (Modelo 65)
+  - Configuração automática de CSC e QR Code
+  - Geração de XML NFCe com `mod=65`, `indFinal=1`, `indPres=1`
+  - Cancelamento e inutilização de numeração
+- Swagger decorators em todos os endpoints NFCe
+
+#### Certificado Digital
+
+- **CertificateSchedulerService** — Verificação diária de vencimento (8h BRT)
+  - Thresholds: 30, 15, 7, 3 e 1 dia(s)
+  - Dispara webhook `certificate.expiring`
+- **Validação de senha** no upload do certificado
+  - Rejeita imediatamente com `BadRequestException` se senha inválida
+
+#### Dashboard
+
+- **Filtro por emissor** na página Visão Geral (`?companyId`)
+- **Leitura real da validade** do certificado via OpenSSL
+
+### Modificado
+
+- `NfceModule` não importa mais `AcbrWrapperService` do NFe
+- `NfceService` utiliza `NfceWrapperService` próprio
+- `NfceController` com Swagger decorators completos
+
+---
+
 ## [2.3.0] - 2026-02-05 (WIP)
 
 ### Adicionado

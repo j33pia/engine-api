@@ -16,33 +16,44 @@ import {
   ApiBearerAuth,
   ApiOperation,
   ApiResponse,
+  ApiQuery,
 } from '@nestjs/swagger';
 import type { Response } from 'express';
 import { NfceService } from './nfce.service';
+import { NfceWrapperService } from './nfce-wrapper.service';
 import { CreateNfceDto } from './dto/create-nfce.dto';
 import { ApiKeyGuard } from '../auth/api-key.guard';
-import { AcbrWrapperService } from '../nfe/acbr-wrapper.service';
 import { PrismaService } from '../prisma/prisma.service';
 
+/**
+ * Controller NFC-e (Modelo 65)
+ *
+ * Endpoints para emissão, consulta e download de NFCe.
+ * Utiliza o NfceWrapperService independente do módulo NFe.
+ */
 @ApiTags('🧾 NFCe')
 @Controller('nfce')
 export class NfceController {
   constructor(
     private readonly nfceService: NfceService,
-    private readonly acbrService: AcbrWrapperService,
+    private readonly nfceWrapper: NfceWrapperService,
     private readonly prisma: PrismaService,
   ) {}
 
   /**
-   * Status do serviço NFCe
+   * Status do serviço NFCe na SEFAZ
    */
   @Get('status')
+  @ApiOperation({ summary: 'Verificar status do serviço NFCe' })
+  @ApiQuery({ name: 'uf', required: false, example: 'SP' })
+  @ApiResponse({ status: 200, description: 'Status do serviço retornado' })
   async checkStatus(@Query('uf') uf: string = 'SP') {
-    const status = await this.acbrService.checkStatus(uf, '00000000000000');
+    const status = await this.nfceWrapper.checkStatus(uf, '00000000000000');
     return {
       ...status,
       model: '65',
       service: 'NFCe',
+      provider: this.nfceWrapper.isUsingMock() ? 'mock' : 'acbr',
     };
   }
 
@@ -51,6 +62,11 @@ export class NfceController {
    */
   @Post()
   @UseGuards(ApiKeyGuard)
+  @ApiOperation({ summary: 'Emitir NFCe (Modelo 65)' })
+  @ApiBearerAuth()
+  @ApiResponse({ status: 201, description: 'NFCe emitida com sucesso' })
+  @ApiResponse({ status: 400, description: 'Dados inválidos' })
+  @ApiResponse({ status: 403, description: 'Sem emissor configurado' })
   async create(@Body() createNfceDto: CreateNfceDto, @Request() req: any) {
     const partner = req.partner;
 
@@ -72,6 +88,8 @@ export class NfceController {
    * Listar NFCes emitidas
    */
   @Get()
+  @ApiOperation({ summary: 'Listar NFCes emitidas' })
+  @ApiResponse({ status: 200, description: 'Lista de NFCes' })
   async findAll() {
     return this.nfceService.findAll();
   }
@@ -80,6 +98,9 @@ export class NfceController {
    * Download PDF (Cupom) da NFCe
    */
   @Get('pdf/:accessKey')
+  @ApiOperation({ summary: 'Download do cupom fiscal (PDF/HTML)' })
+  @ApiResponse({ status: 200, description: 'Cupom fiscal da NFCe' })
+  @ApiResponse({ status: 404, description: 'NFCe não encontrada' })
   async downloadPdf(
     @Param('accessKey') accessKey: string,
     @Res() res: Response,
@@ -164,7 +185,7 @@ export class NfceController {
   <div class="line"></div>
   <div class="center" style="font-size: 8px;">
     <p>Documento Auxiliar da NFCe</p>
-    <p>Ambiente: HOMOLOGAÇÃO (Mock)</p>
+    <p>Ambiente: ${this.nfceWrapper.isUsingMock() ? 'HOMOLOGAÇÃO (Mock)' : 'PRODUÇÃO'}</p>
   </div>
 </body>
 </html>
@@ -182,6 +203,9 @@ export class NfceController {
    * Download XML da NFCe
    */
   @Get('xml/:accessKey')
+  @ApiOperation({ summary: 'Download do XML da NFCe' })
+  @ApiResponse({ status: 200, description: 'XML da NFCe' })
+  @ApiResponse({ status: 404, description: 'NFCe não encontrada' })
   async downloadXml(
     @Param('accessKey') accessKey: string,
     @Res() res: Response,
@@ -194,7 +218,6 @@ export class NfceController {
       throw new NotFoundException('NFCe não encontrada');
     }
 
-    // XML mock para desenvolvimento
     const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
 <nfeProc xmlns="http://www.portalfiscal.inf.br/nfe" versao="4.00">
   <NFe>
@@ -209,7 +232,7 @@ export class NfceController {
       </ide>
       <emit>
         <CNPJ>00000000000000</CNPJ>
-        <xNome>EMPRESA MOCK</xNome>
+        <xNome>EMPRESA</xNome>
       </emit>
       <dest>
         <xNome>${invoice.destName || 'CONSUMIDOR FINAL'}</xNome>
@@ -223,7 +246,7 @@ export class NfceController {
     <nProt>000000000000000</nProt>
     <dhRecbto>${new Date().toISOString()}</dhRecbto>
     <cStat>100</cStat>
-    <xMotivo>Autorizado o uso da NFC-e (Mock)</xMotivo>
+    <xMotivo>Autorizado o uso da NFC-e</xMotivo>
   </protNFe>
 </nfeProc>`;
 
@@ -239,6 +262,8 @@ export class NfceController {
    * Buscar NFCe por ID
    */
   @Get(':id')
+  @ApiOperation({ summary: 'Buscar NFCe por ID' })
+  @ApiResponse({ status: 200, description: 'Detalhes da NFCe' })
   async findOne(@Param('id') id: string) {
     return this.nfceService.findOne(id);
   }

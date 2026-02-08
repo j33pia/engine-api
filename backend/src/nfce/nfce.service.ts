@@ -1,17 +1,27 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { AcbrWrapperService } from '../nfe/acbr-wrapper.service';
+import { NfceWrapperService } from './nfce-wrapper.service';
 import { CreateNfceDto } from './dto/create-nfce.dto';
 
+/**
+ * Serviço de NFCe (Modelo 65)
+ *
+ * Gerencia a emissão de Notas Fiscais de Consumidor Eletrônicas
+ * utilizando o NfceWrapperService independente.
+ */
 @Injectable()
 export class NfceService {
   private readonly logger = new Logger(NfceService.name);
 
   constructor(
     private prisma: PrismaService,
-    private acbrService: AcbrWrapperService,
+    private nfceWrapper: NfceWrapperService,
   ) {}
 
+  /**
+   * Emitir NFCe (Modelo 65)
+   * Cria registro no banco, emite via ACBr e atualiza com resultado
+   */
   async emitir(createNfceDto: CreateNfceDto, issuerId: string) {
     this.logger.log(`[NFCe] Iniciando emissão para issuer: ${issuerId}`);
 
@@ -86,8 +96,8 @@ export class NfceService {
       cscId: issuer.cscId,
     };
 
-    // Emitir via ACBr (Mock ou Real)
-    const emission = await this.acbrService.emitirNfce(dadosNfce, issuer);
+    // Emitir via NfceWrapper (Mock ou Real)
+    const emission = await this.nfceWrapper.emitir(dadosNfce, issuer);
 
     // Atualizar Invoice com resultado
     const updatedInvoice = await this.prisma.invoice.update({
@@ -96,7 +106,7 @@ export class NfceService {
         accessKey: emission.accessKey || null,
         status: emission.success ? 'AUTHORIZED' : 'ERROR',
         xmlPath: emission.accessKey
-          ? `/app/xml/${emission.accessKey}-nfce.xml`
+          ? `/app/xml/nfce/${emission.accessKey}-nfce.xml`
           : null,
         pdfPath: emission.pdfPath || null,
       },
